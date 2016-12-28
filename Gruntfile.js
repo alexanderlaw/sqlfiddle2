@@ -60,6 +60,9 @@ module.exports = function(grunt) {
             }
         },
         watch: {
+            options: {
+                interval: 5000
+            },
             copyUIJS: {
                 files: ['src/main/resources/ui/sqlfiddle/www/javascript/**/*'],
                 tasks: [ 'sync', 'requirejs:minifyMainJS', 'requirejs:minifyOAuthJS' ]

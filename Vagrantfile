@@ -115,7 +115,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     pg.vm.network "private_network", ip: "10.0.0.95"
 
     pg.vm.provider "virtualbox" do |v, override|
-      v.customize ["modifyvm", :id, "--nictype1", "virtio", "--nictype2", "virtio", "--chipset", "ich9"]
+      v.customize ["modifyvm", :id, "--nictype1", "virtio", "--nictype2", "virtio", "--chipset", "ich9", "--uartmode1", "disconnected"]
     end
 
     pg.vm.provider "aws" do |aws, override|
@@ -132,7 +132,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     pg.vm.network "private_network", ip: "10.0.0.96"
 
     pg.vm.provider "virtualbox" do |v, override|
-      v.customize ["modifyvm", :id, "--nictype1", "virtio", "--nictype2", "virtio", "--chipset", "ich9"]
+      v.customize ["modifyvm", :id, "--nictype1", "virtio", "--nictype2", "virtio", "--chipset", "ich9", "--uartmode1", "disconnected"]
     end
 
     pg.vm.provider "aws" do |aws, override|
@@ -157,7 +157,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     end
 
     appdb1.vm.provider "virtualbox" do |v, override|
-      v.customize ["modifyvm", :id, "--nictype1", "virtio", "--nictype2", "virtio", "--chipset", "ich9"]
+      v.customize ["modifyvm", :id, "--nictype1", "virtio", "--nictype2", "virtio", "--chipset", "ich9", "--uartmode1", "disconnected"]
     end
 
     appdb1.vm.provision :shell, :path => "vagrant_scripts/pg_bootstrap.sh", :args => ["9.6", ENV["LANG"]]
@@ -182,7 +182,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     end
 
     idm.vm.provider "virtualbox" do |v, override|
-      v.customize ["modifyvm", :id, "--nictype1", "virtio", "--nictype2", "virtio", "--chipset", "ich9"]
+      v.customize ["modifyvm", :id, "--nictype1", "virtio", "--nictype2", "virtio", "--chipset", "ich9", "--uartmode1", "disconnected"]
       override.vm.provision :shell, path: "vagrant_scripts/idm_startup.sh", run: "always"
     end
 

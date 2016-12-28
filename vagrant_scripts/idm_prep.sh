@@ -29,6 +29,8 @@ echo "10.0.0.15 MYSQL56_HOST" >> /etc/hosts
 echo "10.0.0.17 ORACLE11G_HOST" >> /etc/hosts
 echo "10.0.0.17 SQLSERVER2014_HOST" >> /etc/hosts
 echo "10.0.0.18 MYSQL55_HOST" >> /etc/hosts
+echo "10.0.0.95 POSTGRESQL95_HOST" >> /etc/hosts
+echo "10.0.0.96 POSTGRESQL96_HOST" >> /etc/hosts
 
 apt-get --yes update
 apt-get --yes upgrade

@@ -160,7 +160,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       v.customize ["modifyvm", :id, "--nictype1", "virtio", "--nictype2", "virtio", "--chipset", "ich9"]
     end
 
-    appdb1.vm.provision :shell, :path => "vagrant_scripts/pg93_bootstrap.sh"
+    appdb1.vm.provision :shell, :path => "vagrant_scripts/pg_bootstrap.sh", :args => ["9.6", ENV["LANG"]]
     appdb1.vm.provision :shell, :path => "vagrant_scripts/appdb_bootstrap.sh"
     appdb1.vm.box = "ubuntu/xenial64"
     appdb1.vm.network "private_network", ip: "10.0.0.16"

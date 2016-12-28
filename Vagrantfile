@@ -75,7 +75,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.define "mysql56" do |mysql56|
     mysql56.vm.provision :shell, :path => "vagrant_scripts/my56_bootstrap.sh"
-    mysql56.vm.box = "ubuntu/trusty64"
+    mysql56.vm.box = "ubuntu/xenial64"
     mysql56.vm.network "private_network", ip: "10.0.0.15"
 
     mysql56.vm.provider "aws" do |aws, override|
@@ -85,7 +85,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.define "mysql55" do |mysql55|
     mysql55.vm.provision :shell, :path => "vagrant_scripts/my55_bootstrap.sh"
-    mysql55.vm.box = "ubuntu/trusty64"
+    mysql55.vm.box = "ubuntu/xenial64"
     mysql55.vm.network "private_network", ip: "10.0.0.18"
 
     mysql55.vm.provider "aws" do |aws, override|
@@ -98,7 +98,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     postgresql93.vm.provision :shell, :path => "vagrant_scripts/pg93_bootstrap.sh"
     postgresql93.vm.provision :shell, :inline => 'echo "0 */4 * * *       service postgresql restart 2>&1" | crontab'
 
-    postgresql93.vm.box = "ubuntu/trusty64"
+    postgresql93.vm.box = "ubuntu/xenial64"
     postgresql93.vm.network "private_network", ip: "10.0.0.19"
 
     postgresql93.vm.provider "aws" do |aws, override|
@@ -124,13 +124,13 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     appdb1.vm.provision :shell, :path => "vagrant_scripts/pg93_bootstrap.sh"
     appdb1.vm.provision :shell, :path => "vagrant_scripts/appdb_bootstrap.sh"
-    appdb1.vm.box = "ubuntu/trusty64"
+    appdb1.vm.box = "ubuntu/xenial64"
     appdb1.vm.network "private_network", ip: "10.0.0.16"
   end
 
   config.vm.define "idm", primary: true do |idm|
 
-    idm.vm.box = "ubuntu/trusty64"
+    idm.vm.box = "ubuntu/xenial64"
     idm.vm.network "private_network", ip: "10.0.0.14"
     idm.vm.network "forwarded_port", guest: 8080, host: 18080
     idm.vm.network "forwarded_port", guest: 80, host: 6081
@@ -144,7 +144,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     end
 
     idm.vm.provider "virtualbox" do |v, override|
-      v.memory = 1024
       override.vm.provision :shell, path: "vagrant_scripts/idm_startup.sh", run: "always"
     end
 
@@ -157,7 +156,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.define "idm2", autostart: false do |idm2|
 
-    idm2.vm.box = "ubuntu/trusty64"
+    idm2.vm.box = "ubuntu/xenial64"
     idm2.vm.network "private_network", ip: "10.0.0.24"
     idm2.vm.network "forwarded_port", guest: 8080, host: 28080
 

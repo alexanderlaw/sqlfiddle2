@@ -107,6 +107,32 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     end
   end
 
+  config.vm.define "postgresql95" do |pg|
+    pg.vm.provision :shell, :path => "vagrant_scripts/pg_bootstrap.sh", :args => ["9.5", ENV["LANG"]]
+    pg.vm.provision :shell, :inline => 'echo "0 */4 * * *       service postgresql restart 2>&1" | crontab'
+
+    pg.vm.box = "ubuntu/xenial64"
+    pg.vm.network "private_network", ip: "10.0.0.95"
+
+    pg.vm.provider "aws" do |aws, override|
+      aws.instance_type = "t2.micro"
+      aws.private_ip_address = "10.0.0.95"
+    end
+  end
+
+  config.vm.define "postgresql96" do |pg|
+    pg.vm.provision :shell, :path => "vagrant_scripts/pg_bootstrap.sh", :args => ["9.6", ENV["LANG"]]
+    pg.vm.provision :shell, :inline => 'echo "0 */4 * * *       service postgresql restart 2>&1" | crontab'
+
+    pg.vm.box = "ubuntu/xenial64"
+    pg.vm.network "private_network", ip: "10.0.0.96"
+
+    pg.vm.provider "aws" do |aws, override|
+      aws.instance_type = "t2.micro"
+      aws.private_ip_address = "10.0.0.96"
+    end
+  end
+
   config.vm.define "appdb1" do |appdb1|
     appdb1.vm.provider "aws" do |aws, override|
       aws.private_ip_address = "10.0.0.16"

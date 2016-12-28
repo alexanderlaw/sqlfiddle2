@@ -33,6 +33,6 @@ echo "10.0.0.18 MYSQL55_HOST" >> /etc/hosts
 apt-get --yes update
 apt-get --yes upgrade
 
-apt-get --yes --force-yes install openjdk-7-jdk varnish
+apt-get --yes --force-yes install openjdk-8-jdk varnish
 
 cp /vagrant/src/main/resources/varnish/default.vcl /etc/varnish

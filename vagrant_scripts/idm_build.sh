@@ -32,3 +32,5 @@ fi
 
 cd target/sqlfiddle/bin
 ./create-openidm-rc.sh
+cp openidm /etc/init.d/
+update-rc.d openidm defaults

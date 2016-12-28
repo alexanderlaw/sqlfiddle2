@@ -1,3 +1,5 @@
+#!/bin/bash
+set -e
 
 echo "host    all             all             10.0.0.14/32            md5" >> /etc/postgresql/9.3/main/pg_hba.conf
 echo "host    all             all             10.0.0.24/32            md5" >> /etc/postgresql/9.3/main/pg_hba.conf

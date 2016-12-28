@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 apt-get --yes --force-yes install maven npm
 

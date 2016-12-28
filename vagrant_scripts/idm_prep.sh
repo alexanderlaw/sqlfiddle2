@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 # create a 512mb swapfile
 dd if=/dev/zero of=/swapfile1 bs=1024 count=524288

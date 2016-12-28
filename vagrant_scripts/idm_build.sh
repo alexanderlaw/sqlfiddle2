@@ -1,9 +1,8 @@
 #!/bin/bash
 set -e
 
-apt-get --yes --force-yes install maven npm
+apt-get --yes --force-yes install maven npm nodejs-legacy
 
-ln -s /usr/bin/nodejs /usr/bin/node
 npm install -g grunt-cli
 
 cd ~

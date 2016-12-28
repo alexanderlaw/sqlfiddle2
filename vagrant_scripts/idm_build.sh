@@ -15,7 +15,7 @@ mv /vagrant/vagrant_scripts/jtds-1.3.1.bar ~/jtds-1.3.1.jar
 mvn install:install-file -DgroupId=net.sourceforge.jtds -DartifactId=jtds -Dversion=1.3.1 -Dpackaging=jar -Dfile=./jtds-1.3.1.jar
 
 cd /vagrant
-mvn clean install
+mvn -B clean install
 npm install
 
 

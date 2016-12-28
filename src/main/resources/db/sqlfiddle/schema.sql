@@ -2,11 +2,17 @@
 -- PostgreSQL database dump
 --
 
+-- Dumped from database version 9.6.1
+-- Dumped by pg_dump version 9.6.1
+
 SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SET check_function_bodies = false;
 SET client_min_messages = warning;
+SET row_security = off;
 
 --
 -- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
@@ -43,7 +49,7 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
--- Name: db_types; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+-- Name: db_types; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE db_types (
@@ -67,7 +73,7 @@ CREATE TABLE db_types (
 );
 
 
-ALTER TABLE public.db_types OWNER TO postgres;
+ALTER TABLE db_types OWNER TO postgres;
 
 --
 -- Name: db_types_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
@@ -81,7 +87,7 @@ CREATE SEQUENCE db_types_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.db_types_id_seq OWNER TO postgres;
+ALTER TABLE db_types_id_seq OWNER TO postgres;
 
 --
 -- Name: db_types_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
@@ -91,7 +97,7 @@ ALTER SEQUENCE db_types_id_seq OWNED BY db_types.id;
 
 
 --
--- Name: hosts; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+-- Name: hosts; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE hosts (
@@ -104,7 +110,7 @@ CREATE TABLE hosts (
 );
 
 
-ALTER TABLE public.hosts OWNER TO postgres;
+ALTER TABLE hosts OWNER TO postgres;
 
 --
 -- Name: hosts_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
@@ -118,7 +124,7 @@ CREATE SEQUENCE hosts_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.hosts_id_seq OWNER TO postgres;
+ALTER TABLE hosts_id_seq OWNER TO postgres;
 
 --
 -- Name: hosts_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
@@ -128,7 +134,7 @@ ALTER SEQUENCE hosts_id_seq OWNED BY hosts.id;
 
 
 --
--- Name: queries; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+-- Name: queries; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE queries (
@@ -141,10 +147,10 @@ CREATE TABLE queries (
 );
 
 
-ALTER TABLE public.queries OWNER TO postgres;
+ALTER TABLE queries OWNER TO postgres;
 
 --
--- Name: query_sets; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+-- Name: query_sets; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE query_sets (
@@ -161,10 +167,10 @@ CREATE TABLE query_sets (
 );
 
 
-ALTER TABLE public.query_sets OWNER TO postgres;
+ALTER TABLE query_sets OWNER TO postgres;
 
 --
--- Name: schema_defs; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+-- Name: schema_defs; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE schema_defs (
@@ -178,11 +184,11 @@ CREATE TABLE schema_defs (
     statement_separator character varying(5) DEFAULT ';'::character varying,
     owner_id integer,
     structure_json text,
-    deprovision smallint default 1
+    deprovision smallint DEFAULT 1
 );
 
 
-ALTER TABLE public.schema_defs OWNER TO postgres;
+ALTER TABLE schema_defs OWNER TO postgres;
 
 --
 -- Name: schema_defs_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
@@ -196,7 +202,7 @@ CREATE SEQUENCE schema_defs_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.schema_defs_id_seq OWNER TO postgres;
+ALTER TABLE schema_defs_id_seq OWNER TO postgres;
 
 --
 -- Name: schema_defs_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
@@ -206,7 +212,7 @@ ALTER SEQUENCE schema_defs_id_seq OWNED BY schema_defs.id;
 
 
 --
--- Name: user_fiddles; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+-- Name: user_fiddles; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE user_fiddles (
@@ -220,7 +226,7 @@ CREATE TABLE user_fiddles (
 );
 
 
-ALTER TABLE public.user_fiddles OWNER TO postgres;
+ALTER TABLE user_fiddles OWNER TO postgres;
 
 --
 -- Name: user_fiddles_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
@@ -234,7 +240,7 @@ CREATE SEQUENCE user_fiddles_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.user_fiddles_id_seq OWNER TO postgres;
+ALTER TABLE user_fiddles_id_seq OWNER TO postgres;
 
 --
 -- Name: user_fiddles_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
@@ -244,7 +250,7 @@ ALTER SEQUENCE user_fiddles_id_seq OWNED BY user_fiddles.id;
 
 
 --
--- Name: users; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+-- Name: users; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE users (
@@ -255,7 +261,7 @@ CREATE TABLE users (
 );
 
 
-ALTER TABLE public.users OWNER TO postgres;
+ALTER TABLE users OWNER TO postgres;
 
 --
 -- Name: users_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
@@ -269,7 +275,7 @@ CREATE SEQUENCE users_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.users_id_seq OWNER TO postgres;
+ALTER TABLE users_id_seq OWNER TO postgres;
 
 --
 -- Name: users_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
@@ -279,42 +285,42 @@ ALTER SEQUENCE users_id_seq OWNED BY users.id;
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+-- Name: db_types id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY db_types ALTER COLUMN id SET DEFAULT nextval('db_types_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+-- Name: hosts id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY hosts ALTER COLUMN id SET DEFAULT nextval('hosts_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+-- Name: schema_defs id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY schema_defs ALTER COLUMN id SET DEFAULT nextval('schema_defs_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+-- Name: user_fiddles id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY user_fiddles ALTER COLUMN id SET DEFAULT nextval('user_fiddles_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+-- Name: users id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY users ALTER COLUMN id SET DEFAULT nextval('users_id_seq'::regclass);
 
 
 --
--- Name: db_types_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+-- Name: db_types db_types_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY db_types
@@ -322,7 +328,7 @@ ALTER TABLE ONLY db_types
 
 
 --
--- Name: hosts_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+-- Name: hosts hosts_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY hosts
@@ -330,7 +336,7 @@ ALTER TABLE ONLY hosts
 
 
 --
--- Name: queries_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+-- Name: queries queries_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY queries
@@ -338,7 +344,7 @@ ALTER TABLE ONLY queries
 
 
 --
--- Name: query_sets_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+-- Name: query_sets query_sets_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY query_sets
@@ -346,7 +352,7 @@ ALTER TABLE ONLY query_sets
 
 
 --
--- Name: schema_defs_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+-- Name: schema_defs schema_defs_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY schema_defs
@@ -354,7 +360,7 @@ ALTER TABLE ONLY schema_defs
 
 
 --
--- Name: user_fiddles_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+-- Name: user_fiddles user_fiddles_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY user_fiddles
@@ -362,7 +368,7 @@ ALTER TABLE ONLY user_fiddles
 
 
 --
--- Name: users_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+-- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY users
@@ -370,74 +376,84 @@ ALTER TABLE ONLY users
 
 
 --
--- Name: query_author; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+-- Name: query_author; Type: INDEX; Schema: public; Owner: postgres
 --
 
 CREATE INDEX query_author ON queries USING btree (author_id);
 
 
 --
--- Name: query_md5s; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+-- Name: query_md5s; Type: INDEX; Schema: public; Owner: postgres
 --
 
 CREATE INDEX query_md5s ON queries USING btree (md5, schema_def_id);
 
 
 --
--- Name: schema_md5s; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+-- Name: schema_defs_deprovision; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX schema_defs_deprovision ON schema_defs USING btree (short_code, db_type_id) WHERE (deprovision = 0);
+
+
+--
+-- Name: schema_last_used; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX schema_last_used ON schema_defs USING btree (last_used);
+
+
+--
+-- Name: schema_md5s; Type: INDEX; Schema: public; Owner: postgres
 --
 
 CREATE INDEX schema_md5s ON schema_defs USING btree (md5, db_type_id);
 
 
 --
--- Name: schema_owner; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+-- Name: schema_owner; Type: INDEX; Schema: public; Owner: postgres
 --
 
 CREATE INDEX schema_owner ON schema_defs USING btree (owner_id);
 
---
--- Name: schema_last_used; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
---
-
-CREATE INDEX schema_last_used ON schema_defs USING btree (last_used);
 
 --
--- Name: schema_short_codes; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+-- Name: schema_short_codes; Type: INDEX; Schema: public; Owner: postgres
 --
 
 CREATE UNIQUE INDEX schema_short_codes ON schema_defs USING btree (short_code, db_type_id);
 
 
-CREATE INDEX schema_defs_deprovision ON schema_defs (short_code, db_type_id) 
-WHERE deprovision = 0;
+--
+-- Name: user_email; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE UNIQUE INDEX user_email ON users USING btree (email);
 
 
 --
--- Name: user_fiddles_user_id; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+-- Name: user_fiddles_user_id; Type: INDEX; Schema: public; Owner: postgres
 --
 
 CREATE INDEX user_fiddles_user_id ON user_fiddles USING btree (user_id);
 
 
 --
--- Name: user_fiddles_user_schema_query_id; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+-- Name: user_fiddles_user_schema_query_id; Type: INDEX; Schema: public; Owner: postgres
 --
 
 CREATE INDEX user_fiddles_user_schema_query_id ON user_fiddles USING btree (user_id, schema_def_id, query_id);
 
 
 --
--- Name: user_identities; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+-- Name: user_identities; Type: INDEX; Schema: public; Owner: postgres
 --
 
-CREATE UNIQUE INDEX user_identities ON users USING btree (issuer,subject);
-
-CREATE UNIQUE INDEX user_email ON users USING btree (email);
+CREATE UNIQUE INDEX user_identities ON users USING btree (issuer, subject);
 
 
 --
--- Name: db_type_ref; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: hosts db_type_ref; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY hosts
@@ -445,7 +461,7 @@ ALTER TABLE ONLY hosts
 
 
 --
--- Name: db_type_ref; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: schema_defs db_type_ref; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY schema_defs
@@ -453,15 +469,7 @@ ALTER TABLE ONLY schema_defs
 
 
 --
--- Name: host_ref; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
---ALTER TABLE ONLY schema_defs
---    ADD CONSTRAINT host_ref FOREIGN KEY (current_host_id) REFERENCES hosts(id);
-
-
---
--- Name: schema_def_ref; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: queries schema_def_ref; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY queries
@@ -469,21 +477,11 @@ ALTER TABLE ONLY queries
 
 
 --
--- Name: schema_def_ref; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: user_fiddles schema_def_ref; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY user_fiddles
     ADD CONSTRAINT schema_def_ref FOREIGN KEY (schema_def_id) REFERENCES schema_defs(id);
-
-
---
--- Name: public; Type: ACL; Schema: -; Owner: postgres
---
-
-REVOKE ALL ON SCHEMA public FROM PUBLIC;
-REVOKE ALL ON SCHEMA public FROM postgres;
-GRANT ALL ON SCHEMA public TO postgres;
-GRANT ALL ON SCHEMA public TO PUBLIC;
 
 
 --

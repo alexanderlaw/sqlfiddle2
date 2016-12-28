@@ -1,3 +1,5 @@
+vcl 4.0;
+
 backend default {
     .host = "127.0.0.1";
     .port = "8080";
@@ -5,13 +7,13 @@ backend default {
 
 sub vcl_recv {
 
-    if (req.request == "POST" && !req.http.Content-Length) {
-        error 411 "Content-Length required";
+    if (req.method == "POST" && !req.http.Content-Length) {
+        return (synth(411, "Content-Length required"));
     }
 
     # Require that the content be less than 8000 characters
-    if (req.request == "POST" && !req.http.Content-Length ~ "^[1-7]?[0-9]{1,3}$") {
-        error 413 "Request content too large (>8000)";
+    if (req.method == "POST" && !req.http.Content-Length ~ "^[1-7]?[0-9]{1,3}$") {
+        return (synth(413, "Request content too large (>8000)"));
     }
 
     if (! (req.url ~ "^/openidm/") ) {
@@ -19,14 +21,14 @@ sub vcl_recv {
     }
 
     if ( req.url == "/sqlfiddle/") {
-      set req.url = "/sqlfiddle/index.html"; 
+      set req.url = "/sqlfiddle/index.html";
     }
 
-    if (req.request == "GET" && req.url != "/openidm/info/login" && req.url != "/openidm/endpoint/favorites?_queryId=myFavorites") {
+    if (req.method == "GET" && req.url != "/openidm/info/login" && req.url != "/openidm/endpoint/favorites?_queryId=myFavorites") {
         unset req.http.cookie;
     }
 
-    if (req.request == "GET" && req.url == "/openidm/info/ping") {
+    if (req.method == "GET" && req.url == "/openidm/info/ping") {
         set req.http.X-OpenIDM-Username = "anonymous";
         set req.http.X-OpenIDM-Password = "anonymous";
         set req.http.X-OpenIDM-NoSession = "true";
@@ -34,9 +36,9 @@ sub vcl_recv {
 
 }
 
-sub vcl_fetch {
-    if (req.request == "GET") {
-        if (req.url ~ "/openidm/info/.*" || req.url == "/openidm/endpoint/favorites?_queryId=myFavorites") {
+sub vcl_backend_response {
+    if (bereq.method == "GET") {
+        if (bereq.url ~ "/openidm/info/.*" || bereq.url == "/openidm/endpoint/favorites?_queryId=myFavorites") {
             set beresp.ttl = 0s;
         } else {
             set beresp.ttl = 60m;

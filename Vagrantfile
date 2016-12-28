@@ -171,7 +171,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     idm.vm.box = "ubuntu/xenial64"
     idm.vm.network "private_network", ip: "10.0.0.14"
     idm.vm.network "forwarded_port", guest: 8080, host: 18080
-    idm.vm.network "forwarded_port", guest: 80, host: 6081
+    idm.vm.network "forwarded_port", guest: 6081, host: 6081
 
     idm.vm.provider "aws" do |aws, override|
       aws.private_ip_address = "10.0.0.14"

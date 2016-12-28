@@ -35,4 +35,3 @@ apt-get --yes upgrade
 apt-get --yes --force-yes install openjdk-7-jdk varnish
 
 cp /vagrant/src/main/resources/varnish/default.vcl /etc/varnish
-cp /vagrant/src/main/resources/varnish/default_varnish /etc/default/varnish

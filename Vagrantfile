@@ -114,6 +114,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     pg.vm.box = "ubuntu/xenial64"
     pg.vm.network "private_network", ip: "10.0.0.95"
 
+    pg.vm.provider "virtualbox" do |v, override|
+      v.customize ["modifyvm", :id, "--nictype1", "virtio", "--nictype2", "virtio", "--chipset", "ich9"]
+    end
+
     pg.vm.provider "aws" do |aws, override|
       aws.instance_type = "t2.micro"
       aws.private_ip_address = "10.0.0.95"
@@ -126,6 +130,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     pg.vm.box = "ubuntu/xenial64"
     pg.vm.network "private_network", ip: "10.0.0.96"
+
+    pg.vm.provider "virtualbox" do |v, override|
+      v.customize ["modifyvm", :id, "--nictype1", "virtio", "--nictype2", "virtio", "--chipset", "ich9"]
+    end
 
     pg.vm.provider "aws" do |aws, override|
       aws.instance_type = "t2.micro"
@@ -146,6 +154,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       }]
 
       override.vm.provision :shell, :path => "vagrant_scripts/appdb_aws.sh"
+    end
+
+    appdb1.vm.provider "virtualbox" do |v, override|
+      v.customize ["modifyvm", :id, "--nictype1", "virtio", "--nictype2", "virtio", "--chipset", "ich9"]
     end
 
     appdb1.vm.provision :shell, :path => "vagrant_scripts/pg93_bootstrap.sh"
@@ -170,6 +182,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     end
 
     idm.vm.provider "virtualbox" do |v, override|
+      v.customize ["modifyvm", :id, "--nictype1", "virtio", "--nictype2", "virtio", "--chipset", "ich9"]
       override.vm.provision :shell, path: "vagrant_scripts/idm_startup.sh", run: "always"
     end
 

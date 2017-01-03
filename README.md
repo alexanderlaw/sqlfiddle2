@@ -25,33 +25,9 @@ Thanks,
 Jake Feasel
 
 
-## Commercial software requirements
-
-To run the commercial database software (Microsoft SQL Server 2014 Express, Oracle 11g R2 XE) you must have a Windows Server 2008 R2 (or higher) instance available, preferably as a Vagrantbox. The core software must be installed prior to attempting to use it with SQL Fiddle. Below are the expectations for how this Vagrantbox image needs to be produced
-
-### Windows 2008 Server Requirements
-1) Install Windows in a Virtualbox VM
-2) Install the database software within this VM (see below sections for details)
-3) Follow the instructions listed on [this blog post to turn it into a Vagrantbox](http://dennypc.wordpress.com/2014/06/09/creating-a-windows-box-with-vagrant-1-6/)
-4) Update the Vagrantfile located in this folder to refer to your own Vagrantbox image (replace /Volumes/Virtual Disk Storage/jakefeasel.windows2008R2SQLServer2014Oracle11GXE.box with the path to your image)
-5) Before you type vagrant up, you will need to type "vagrant up windows" to start this VM, since it is optional
-
-### SQL Server 2014 Express
-
-1) Don't need the "SQL Server Replication" Feature (leave the others checked)
-2) Use the "Default instance" (leave the "Instance ID" as "MSSQLSERVER")
-3) Authentication mode is "Mixed"; sa password is "SQLServerPassword"
-4) Enable TCP/IP connections in the network configuration
-
-
-### Oracle 11g R2 XE
-1) "system" password is "password"
-2) Follow instructions in vagrant_scripts/idm_bootstrap.sh for details on what must be done to obtain and use the JDBC driver
-
-
 ## Running on AWS
 
-With a bit of preparation, you should be able to deploy the whole app into Amazon Web Services. See the comments in Vagrantfile for an example config that you can fill in with your own AWS account details. For MS SQL and Oracle support, you will have to create your own AMI with Windows, following the same steps mentioned above.
+With a bit of preparation, you should be able to deploy the whole app into Amazon Web Services. See the comments in Vagrantfile for an example config that you can fill in with your own AWS account details.
 
 You will need to install the vagrant-aws plugin. See the plugin site here for details: https://github.com/mitchellh/vagrant-aws
 

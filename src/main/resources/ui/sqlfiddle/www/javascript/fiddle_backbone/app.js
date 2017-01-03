@@ -229,7 +229,9 @@ var obj = {
 
             if (this.length && !this.getSelectedType())
             {
-                this.setSelectedType(this.first().id, true);
+                var visible = this.filter(function(dbtype) {return (dbtype.get('context') != 'host' || dbtype.get('num_hosts') > 0)});
+                if (visible.length)
+                    this.setSelectedType(visible[0].id, true);
             }
 
             schemaDef.set({"dbType": this.getSelectedType()}, {silent: true});

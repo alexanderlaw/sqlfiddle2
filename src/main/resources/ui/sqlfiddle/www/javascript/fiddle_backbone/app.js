@@ -184,8 +184,8 @@ var obj = {
             var thisButton = $(this);
             thisButton.attr("disabled", true);
             e.preventDefault();
-            $.post("index.cfm/proxy/formatSQL", {sql: query.get("sql")}, function (resp) {
-                query.set({"sql": resp});
+            $.post("https://sqlformat.org/api/v1/format", {sql: query.get("sql"), reindent: 1, keyword_case: "upper"}, function (resp) {
+                query.set({"sql": resp['result']});
                 query.trigger('reloaded');
                 query.set({"pendingChanges": true});
 

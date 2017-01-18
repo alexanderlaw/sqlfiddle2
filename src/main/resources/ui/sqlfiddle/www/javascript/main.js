@@ -44,6 +44,7 @@ require([
         'utils/handlebarsHelpers/divider_display',
         'utils/handlebarsHelpers/each_simple_value_with_index',
         'utils/handlebarsHelpers/each_with_index',
+        'utils/handlebarsHelpers/each_with_index2',
         'utils/handlebarsHelpers/result_display_padded',
         'utils/handlebarsHelpers/result_display',
         'utils/handlebarsHelpers/code_format',

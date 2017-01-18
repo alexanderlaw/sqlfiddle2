@@ -10,10 +10,17 @@ Markdown is useful for posting on sites like <a href="http://stackoverflow.com" 
 {{code_format STATEMENT}}
 
 **[Results][{{add index 2}}]**:
-    {{#if this.RESULTS.DATA.length}}
+    {{#if this.RESULTS}}{{#if this.RESULTS.DATA.length}}
     |{{#each_simple_value_with_index this.RESULTS.COLUMNS}} {{result_display_padded ../this/RESULTS/COLUMNWIDTHS}} |{{/each_simple_value_with_index}}
     |{{#each_simple_value_with_index this.RESULTS.COLUMNS}}{{divider_display ../this/RESULTS/COLUMNWIDTHS}}{{/each_simple_value_with_index}}{{#each this.RESULTS.DATA}}
     |{{#each_simple_value_with_index this}} {{result_display_padded ../../this/RESULTS/COLUMNWIDTHS}} |{{/each_simple_value_with_index}}{{/each}}
+{{/if}}{{/if}}
+{{#if this.RESULTSETS}}
+{{#each_with_index2 this.RESULTSETS}}
+    |{{#each_simple_value_with_index this.COLUMNS}} {{result_display_padded ../this/COLUMNWIDTHS}} |{{/each_simple_value_with_index}}
+    |{{#each_simple_value_with_index this.COLUMNS}}{{divider_display ../this/COLUMNWIDTHS}}{{/each_simple_value_with_index}}{{#each this.DATA}}
+    |{{#each_simple_value_with_index this}} {{result_display_padded ../../this/COLUMNWIDTHS}} |{{/each_simple_value_with_index}}{{/each}}
+{{/each_with_index2}}
 {{/if}}
 {{/each_with_index}}
 

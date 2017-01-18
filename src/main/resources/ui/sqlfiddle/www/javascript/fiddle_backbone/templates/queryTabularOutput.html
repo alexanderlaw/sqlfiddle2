@@ -1,6 +1,6 @@
 {{#each_with_index sets}}
 <div class="set" id="set_{{index}}">
-    {{#if this.RESULTS.DATA.length}}
+    {{#if this.RESULTS}}{{#if this.RESULTS.DATA.length}}
         <table class="results table table-bordered table-striped">
             <tr>
             {{#each this.RESULTS.COLUMNS}}
@@ -14,12 +14,33 @@
                 {{/each}}
             </tr>
             {{/each}}
+            <caption style="caption-side:bottom;text-align:left">Record Count: {{this.RESULTS.DATA.length}}</caption>
         </table>
+    {{/if}}{{/if}}
+    {{#if this.RESULTSETS}}
+        {{#each_with_index2 this.RESULTSETS}}
+        <div class="set">
+        <table class="results table table-bordered table-striped">
+            <tr>
+            {{#each this.COLUMNS}}
+            <th>{{this}}</th>
+            {{/each}}
+            </tr>
+            {{#each this.DATA}}
+            <tr>
+                {{#each this}}
+                <td>{{result_display this this}}</td>
+                {{/each}}
+            </tr>
+            {{/each}}
+            <caption style="caption-side:bottom;text-align:left">Record Count: {{this.DATA.length}}</caption>
+        </table>
+        {{/each_with_index2}}
     {{/if}}
     {{#if this.SUCCEEDED}}
     <div id="messages_{{index}}" class="alert alert-success database-messages">
         <i class="icon-ok"></i>
-        Record Count: {{this.RESULTS.DATA.length}}; Execution Time: {{this.EXECUTIONTIME}}ms
+        Execution Time: {{this.EXECUTIONTIME}}ms
         {{#if this.RESULTS}}{{#if this.EXECUTIONPLAN.DATA.length}}
         <a href="#executionPlan" class="executionPlanLink"><i class="icon-plus"></i>View Execution Plan</a>
         {{/if}}{{/if}}

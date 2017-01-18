@@ -13,6 +13,31 @@ define ([
     ],
     function ($,_,Backbone,Handlebars,fiddleEditor,renderTerminator,loadswf,QP,tabTemplate,plainTemplate,mdTemplate) {
 
+    function getColumnWidthsFixNulls(resultset) {
+        // Initialize the column widths with the length of the headers
+        var columnWidths = _.map(resultset.COLUMNS, function (col) {
+            return col.length;
+        });
+
+        // then increase the width as needed if a bigger value is found in the data
+        _.each(resultset.DATA, function (row,ridx) {
+
+            row = _.map(row, function (value) {
+                if (value === null) {
+                    return "(null)";
+                } else {
+                    return value;
+                }
+            });
+
+            resultset.DATA[ridx] = row;
+
+            columnWidths = _.map(row, function (col,cidx) {
+                return _.max([col.toString().length,columnWidths[cidx]]) ;
+            });
+        });
+        return columnWidths;
+    }
 
     var QueryView = Backbone.View.extend({
 
@@ -57,29 +82,15 @@ define ([
             _.each(inspectedData.sets, function (set, sidx) {
                 if (set.RESULTS)
                 {
-                    // Initialize the column widths with the length of the headers
-                    var columnWidths = _.map(set.RESULTS.COLUMNS, function (col) {
-                        return col.length;
+                    var columnWidths = getColumnWidthsFixNulls(set.RESULTS);
+                    inspectedData.sets[sidx].RESULTS.COLUMNWIDTHS = columnWidths;
+                }
+                if (set.RESULTSETS)
+                {
+                    _.each(set.RESULTSETS, function (rset, rsidx) {
+                        var columnWidths = getColumnWidthsFixNulls(rset);
+                        inspectedData.sets[sidx].RESULTSETS[rsidx].COLUMNWIDTHS = columnWidths;
                     });
-
-                    // then increase the width as needed if a bigger value is found in the data
-                    _.each(set.RESULTS.DATA, function (row,ridx) {
-
-                        row = _.map(row, function (value) {
-                            if (value === null) {
-                                return "(null)";
-                            } else {
-                                return value;
-                            }
-                        });
-
-                        set.RESULTS.DATA[ridx] = row;
-
-                        columnWidths = _.map(row, function (col,cidx) {
-                            return _.max([col.toString().length,columnWidths[cidx]]) ;
-                        });
-                    });
-                inspectedData.sets[sidx].RESULTS.COLUMNWIDTHS = columnWidths;
                 }
             });
             inspectedData["schemaDef"] = this.model.get("schemaDef").toJSON();

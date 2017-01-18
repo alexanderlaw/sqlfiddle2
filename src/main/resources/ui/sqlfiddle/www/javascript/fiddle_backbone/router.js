@@ -223,9 +223,15 @@ define([
                                     "sets": _.map(resp["sets"], function (set) {
                                         return {
                                             "succeeded": set.SUCCEEDED,
-                                            "statement_sql": set.STATEMENT ? set.STATEMENT.substring(0,400) : "",
+                                            "statement_sql": set.STATEMENT ? set.STATEMENT.substring(0,4000) : "",
                                             "row_count": set.RESULTS ? set.RESULTS.DATA.length : null,
                                             "columns": set.RESULTS ? set.RESULTS.COLUMNS.join(", ") : null,
+                                            "resultsets": set.RESULTSETS == null ? null : _.map(set.RESULTSETS, function (rset) {
+                                                return {
+                                                "row_count": rset.DATA.length,
+                                                "columns": rset.COLUMNS.join(", ")
+                                                };
+                                            }),
                                             "error_message": set.ERRORMESSAGE
                                         };
                                     })

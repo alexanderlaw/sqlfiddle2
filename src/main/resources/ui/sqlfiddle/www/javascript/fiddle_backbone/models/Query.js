@@ -7,7 +7,7 @@ define(["./OpenIDMResource", "Backbone"], function (idm, Backbone) {
             "sql": "",
             "sets": [],
             "pendingChanges": false,
-            "statement_separator": ";"
+            "statement_separator": "//"
         },
         reset: function () {
             this.set(this.defaults);

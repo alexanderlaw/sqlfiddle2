@@ -17,6 +17,9 @@ define(["./OpenIDMResource", "Backbone"], function (idm, Backbone) {
         },
         reset: function () {
             this.set(this.defaults);
+            var selectedDBType = this.get("dbType");
+            if (selectedDBType && selectedDBType.liveSchema())
+                this.set("ready", true);
             this.trigger("reloaded");
         },
         build: function () {

@@ -84,7 +84,9 @@ var obj = {
         // see also the router function defined below that also binds to this event
             dbTypesListView.render();
             if (schemaDef.has("dbType")) {
-                schemaDef.set("ready", (schemaDef.get("short_code").length && schemaDef.get("dbType").id === this.getSelectedType().id));
+                if (!this.getSelectedType().liveSchema()) {
+                    schemaDef.set("ready", (schemaDef.get("short_code").length && schemaDef.get("dbType").id === this.getSelectedType().id));
+                }
             }
         });
 
@@ -238,6 +240,13 @@ var obj = {
 
             // make sure everything is up-to-date on the page
             dbTypesListView.render();
+            if (this.getSelectedType().liveSchema()) {
+                $(".panel.schema .action_buttons").hide();
+                $(".helpTip").css("display", "block");
+                schemaDef.set("ready", true);
+            } else {
+                $(".panel.schema .action_buttons").show();
+            }
             schemaDefView.render();
             queryView.render();
         });
@@ -256,6 +265,7 @@ var obj = {
             e.preventDefault();
             schemaDef.reset();
             query.reset();
+            queryView.handleQueryChange();
             $("body").unblock();
             router.navigate("!" + dbTypes.getSelectedType().id, {trigger: true});
         });
@@ -267,7 +277,9 @@ var obj = {
 
         dbTypes.on("change", function () {
             dbTypesListView.render();
-            if (
+            if (this.getSelectedType().liveSchema)
+                router.navigate("!" + this.getSelectedType().id + "/" + (schemaDef.get("short_code") ? schemaDef.get("short_code") : "") +  (query.id ? ("/" + query.id) : ""));
+            else if (
                     query.id &&
                     schemaDef.get("short_code").length &&
                     schemaDef.get("dbType").id === this.getSelectedType().id

@@ -30,7 +30,7 @@ define ([
                 this.model.set({
                     "ddl":this.editor.getValue(),
                     "statement_separator":$(".panel.schema .terminator").data("statement_separator"),
-                    "ready": false
+                    "ready": this.model.get("dbType").liveSchema()
                 });
 
                 $(".schema .helpTip").css("display",  this.model.get("ddl").length ? "none" : "block");
@@ -65,7 +65,7 @@ define ([
             {
                 $(".needsReadySchema").unblock();
                 $("#schemaBrowser").attr("disabled", false);
-                $(".schema .helpTip").css("display",  "none");
+                $(".schema .helpTip").css("display",  this.model.get("ddl").length ? "none" : "block");
                 //$(".sql .helpTip").css("display",  (this.model.get('loading') || window.query.get("sql").length) ? "none" : "block");
             }
             else

@@ -9,6 +9,9 @@ define(["Backbone"], function (Backbone) {
             "context": "host",
             "className": "",
             "num_hosts": 0
+        },
+        liveSchema: function () {
+            return this.get("simple_name") == "PostgreSQL";
         }
     });
 });

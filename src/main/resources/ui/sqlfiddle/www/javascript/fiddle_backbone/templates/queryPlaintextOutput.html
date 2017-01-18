@@ -11,14 +11,14 @@
     <div id="messages_{{index}}" class="alert alert-success database-messages">
         <i class="icon-ok"></i>
         Record Count: {{this.RESULTS.DATA.length}}; Execution Time: {{this.EXECUTIONTIME}}ms
-        {{#if this.EXECUTIONPLAN.DATA.length}}
+        {{#if this.RESULTS}}{{#if this.EXECUTIONPLAN.DATA.length}}
         <a href="#executionPlan" class="executionPlanLink"><i class="icon-plus"></i>View Execution Plan</a>
-        {{/if}}
+        {{/if}}{{/if}}
         <a href="#!{{../../schemaDef/dbType/id}}/{{../../schemaDef/short_code}}/{{../../id}}/{{index}}" class="setLink"><i class="icon-share-alt"></i> link</a>
     </div>
 
     {{#if this.EXECUTIONPLAN.DATA.length}}
-        <table class="executionPlan table table-bordered">
+        <table class="executionPlan table table-bordered" style="{{#if this.RESULTS}}display:none{{/if}}">
             <tr>
             {{#each this.EXECUTIONPLAN.COLUMNS}}
             <th>{{this}}</th>

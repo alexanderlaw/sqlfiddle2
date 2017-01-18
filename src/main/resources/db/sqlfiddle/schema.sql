@@ -139,6 +139,8 @@ ALTER SEQUENCE hosts_id_seq OWNED BY hosts.id;
 
 CREATE TABLE queries (
     schema_def_id integer,
+    environment character varying(100),
+    preparation text,
     sql text,
     md5 character varying(32),
     id integer NOT NULL,

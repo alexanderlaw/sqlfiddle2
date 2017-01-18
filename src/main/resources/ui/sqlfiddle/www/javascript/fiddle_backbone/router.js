@@ -204,7 +204,7 @@ define([
 
                             schemaDef.set({
                                 "short_code": resp["short_code"],
-                                "ddl": resp["ddl"],
+                                "ddl": resp["ddl"] ? resp["ddl"] : resp["preparation"],
                                 "ready": true,
                                 "valid": true,
                                 "errorMessage": "",
@@ -219,6 +219,8 @@ define([
                                     "fragment": "!" + db_type_id + "/" + resp["short_code"] + "/" + resp["id"],
                                     "full_name": resp["full_name"],
                                     "structure": resp["schema_structure"],
+                                    "environment": resp["environment"],
+                                    "preparation": resp["preparation"],
                                     "sql": resp["sql"],
                                     "sets": _.map(resp["sets"], function (set) {
                                         return {
@@ -239,6 +241,8 @@ define([
 
                                 query.set({
                                     "id": resp["id"],
+                                    "environment": resp["environment"],
+                                    "preparation": resp["preparation"],
                                     "sql": resp["sql"],
                                     "sets": resp["sets"],
                                     "statement_separator": resp["query_statement_separator"]

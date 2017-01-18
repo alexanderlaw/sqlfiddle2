@@ -511,6 +511,16 @@
                     "nativeName" : "__NAME__",
                     "nativeType" : "string"
                 },
+                "environment" : {
+                    "type" : "string",
+                    "nativeName" : "environment",
+                    "nativeType" : "string"
+                },
+                "preparation" : {
+                    "type" : "string",
+                    "nativeName" : "preparation",
+                    "nativeType" : "string"
+                },
                 "sql" : {
                     "type" : "string",
                     "nativeName" : "sql",

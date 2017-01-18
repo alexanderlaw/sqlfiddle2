@@ -16,10 +16,13 @@ class PostgreSQLException extends Exception {}
 
 def content = request.getContent().asMap()
 
+content.environment = (content.environment ?: "")
+content.preparation = (content.preparation ?: "")
 content.sql = (content.sql ?: "")
 assert content.db_type_id
 
-assert content.sql.size() <= 8000
+assert content.preparation.size() <= 64000
+assert content.sql.size() <= 64000
 
 def execQueryStatement(connection, statement, rethrow) {
     println statement
@@ -140,6 +143,8 @@ def query = openidm.create("system/fiddles/queries",
     [
         "md5": "n/a",
         "db_type_id": content.db_type_id,
+        "environment": content.environment,
+        "preparation": content.preparation,
         "sql": content.sql,
         "statement_separator": content.statement_separator,
         "schema_def_id": schema_def ? schema_def.schema_def_id : null

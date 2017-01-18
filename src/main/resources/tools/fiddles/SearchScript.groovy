@@ -423,6 +423,8 @@ switch ( objectClass.objectClassValue ) {
                 attribute 'md5', dataCollector.id
                 attribute 'query_id', dataCollector.query_id
                 attribute 'schema_def_id', dataCollector.schema_def_id
+                attribute 'environment', dataCollector.environment
+                attribute 'preparation', dataCollector.preparation
                 attribute 'sql', dataCollector.sql
                 attribute 'statement_separator', dataCollector.statement_separator
                 attributes AttributeBuilder.build('query_sets',  dataCollector.query_sets)
@@ -437,6 +439,8 @@ switch ( objectClass.objectClassValue ) {
             q.id,
             COALESCE(s.db_type_id, 0) as db_type_id,
             COALESCE(s.short_code, '0') as short_code,
+            q.environment,
+            q.preparation,
             q.sql,
             q.statement_separator,
             q.md5,
@@ -471,6 +475,8 @@ switch ( objectClass.objectClassValue ) {
                 uid : (row.db_type_id + '_' + row.short_code + '_' + row.id) as String,
                 query_id : row.id.toInteger(),
                 schema_def_id : row.schema_def_id == null ?: row.schema_def_id.toInteger(),
+                environment : row.environment,
+                preparation : row.preparation,
                 sql : row.sql,
                 statement_separator : row.statement_separator,
                 query_sets : [ ]

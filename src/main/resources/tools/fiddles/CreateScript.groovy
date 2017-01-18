@@ -97,6 +97,8 @@ switch ( objectClass.objectClassValue ) {
     case "queries":
 
         def statement_separator = createAttributes.findString("statement_separator")
+        def environment = createAttributes.findString("environment")
+        def sql_prep = createAttributes.findString("preparation")
         def sql_query = createAttributes.findString("sql")
         def db_type_id = createAttributes.findInteger("db_type_id")
         def schema_def_id = createAttributes.findInteger("schema_def_id")
@@ -104,7 +106,7 @@ switch ( objectClass.objectClassValue ) {
         def md5hash
 
         md5hash = new BigInteger(
-                            1, digest.digest( (statement_separator + sql_query).getBytes() )
+                            1, digest.digest( (environment + "\0" + sql_prep + "\0" + statement_separator + "\0" + sql_query).getBytes() )
                         ).toString(16).padLeft(32,"0")
 
         def existing_query = sql.firstRow("""
@@ -134,17 +136,21 @@ switch ( objectClass.objectClassValue ) {
                     (
                         id,
                         md5,
+                        environment,
+                        preparation,
                         sql,
                         statement_separator,
                         schema_def_id
                     )
                     SELECT
-                        COALESCE(MAX(id), 0) + 1, ?, ?, ?, ?
+                        COALESCE(MAX(id), 0) + 1, ?, ?, ?, ?, ?, ?
                     FROM
                         queries
                     """, 
                     [
                         md5hash,
+                        environment,
+                        sql_prep,
                         sql_query,
                         statement_separator,
                         schema_def_id

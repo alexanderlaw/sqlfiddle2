@@ -98,6 +98,7 @@ switch ( objectClass.objectClassValue ) {
 
         def statement_separator = createAttributes.findString("statement_separator")
         def sql_query = createAttributes.findString("sql")
+        def db_type_id = createAttributes.findInteger("db_type_id")
         def schema_def_id = createAttributes.findInteger("schema_def_id")
 
         def md5hash
@@ -122,7 +123,7 @@ switch ( objectClass.objectClassValue ) {
                 q.id
             """, [md5hash, schema_def_id])
 
-        if (!existing_query.queryId) {
+        if (!existing_query || !existing_query.queryId) {
             def new_query
             sql.withTransaction {
 
@@ -137,18 +138,15 @@ switch ( objectClass.objectClassValue ) {
                         statement_separator,
                         schema_def_id
                     )
-                    SELECT  
-                        count(*) + 1, ?, ?, ?, ?
+                    SELECT
+                        COALESCE(MAX(id), 0) + 1, ?, ?, ?, ?
                     FROM
                         queries
-                    WHERE
-                        schema_def_id = ?
                     """, 
                     [
                         md5hash,
                         sql_query,
                         statement_separator,
-                        schema_def_id,
                         schema_def_id
                     ]
                 )
@@ -159,14 +157,14 @@ switch ( objectClass.objectClassValue ) {
                     FROM
                         queries
                     WHERE
-                        schema_def_id = ?
+                        schema_def_id IS NOT DISTINCT FROM ?
                     """,
                     [
                         schema_def_id
                     ]
                 )
             }
-            returnVal = new Uid((existing_query.db_type_id + "_" + existing_query.short_code + "_" + new_query.queryId) as String)
+            returnVal = new Uid((db_type_id + "_" + (existing_query ? existing_query.short_code : 0) + "_" + new_query.queryId) as String)
         } else {
             returnVal = new Uid((existing_query.db_type_id + "_" + existing_query.short_code + "_" + existing_query.queryId) as String)
         }

@@ -58,7 +58,7 @@ def fieldMap = [
     "queries": [
         "__NAME__": "q.md5",
         "query_id": "q.id",
-        "__UID__": "s.db_type_id = ? AND s.short_code = ? AND q.id = ?"
+        "__UID__": "q.id = ?"
     ]
 ]
 
@@ -127,8 +127,6 @@ queryParser = { queryObj ->
             def fragment_parts = queryObj.get("right").split("_")
             assert fragment_parts.size() == 3
 
-            whereParams.push(fragment_parts[0].toInteger())
-            whereParams.push(fragment_parts[1])
             whereParams.push(fragment_parts[2].toInteger())
 
             return fieldMap[objectClass.objectClassValue][queryObj.get("left")]
@@ -437,8 +435,8 @@ switch ( objectClass.objectClassValue ) {
         SELECT
             q.schema_def_id,
             q.id,
-            s.db_type_id,
-            s.short_code,
+            COALESCE(s.db_type_id, 0) as db_type_id,
+            COALESCE(s.short_code, '0') as short_code,
             q.sql,
             q.statement_separator,
             q.md5,
@@ -451,8 +449,8 @@ switch ( objectClass.objectClassValue ) {
             qs.sql as query_set_sql,
             qs.columns_list
         FROM
-            schema_defs s
-                INNER JOIN queries q ON
+            queries q
+                LEFT OUTER JOIN schema_defs s ON
                     q.schema_def_id = s.id
                 LEFT OUTER JOIN query_sets qs ON
                     q.id = qs.query_id AND
@@ -464,7 +462,7 @@ switch ( objectClass.objectClassValue ) {
             qs.id
         """, whereParams) { row ->
 
-        if (dataCollector.uid != row.db_type_id + '_' + row.short_code + '_' + row.id) {
+        if (dataCollector.query_id != row.id.toInteger()) {
 
             handleCollectedData();
 
@@ -472,7 +470,7 @@ switch ( objectClass.objectClassValue ) {
                 id : row.md5,
                 uid : (row.db_type_id + '_' + row.short_code + '_' + row.id) as String,
                 query_id : row.id.toInteger(),
-                schema_def_id : row.schema_def_id.toInteger(),
+                schema_def_id : row.schema_def_id == null ?: row.schema_def_id.toInteger(),
                 sql : row.sql,
                 statement_separator : row.statement_separator,
                 query_sets : [ ]

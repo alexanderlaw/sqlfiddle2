@@ -18,7 +18,6 @@ def content = request.getContent().asMap()
 
 content.sql = (content.sql ?: "")
 assert content.db_type_id
-assert content.schema_short_code
 
 assert content.sql.size() <= 8000
 
@@ -121,23 +120,29 @@ def execQueryStatement(connection, statement, rethrow) {
     return set
 }
 
-def schema_def = openidm.read("system/fiddles/schema_defs/" + content.db_type_id + "_" + content.schema_short_code)
-assert schema_def != null
-
 def db_type = openidm.read("system/fiddles/db_types/" + content.db_type_id)
+if (db_type.simple_name != "PostgreSQL")
+    assert content.schema_short_code;
 
-// Update the timestamp for the schema_def each time this instance is used, so we know if it should stay running longer
-schema_def.last_used = (new Date().format("yyyy-MM-dd HH:mm:ss.S"))
-openidm.update("system/fiddles/schema_defs/" + schema_def._id, null, schema_def)
+def schema_def = null
+if (content.schema_short_code && content.schema_short_code.toInteger() != 0) {
+    schema_def = openidm.read("system/fiddles/schema_defs/" + content.db_type_id + "_" + content.schema_short_code)
+    assert schema_def != null
+
+    // Update the timestamp for the schema_def each time this instance is used, so we know if it should stay running longer
+    schema_def.last_used = (new Date().format("yyyy-MM-dd HH:mm:ss.S"))
+    openidm.update("system/fiddles/schema_defs/" + schema_def._id, null, schema_def)
+}
 
 // Save a copy of this query (or retrieve the details of one that already exists)
 def query = openidm.create("system/fiddles/queries",
     null,
     [
         "md5": "n/a",
+        "db_type_id": content.db_type_id,
         "sql": content.sql,
         "statement_separator": content.statement_separator,
-        "schema_def_id": schema_def.schema_def_id
+        "schema_def_id": schema_def ? schema_def.schema_def_id : null
     ]
 )
 
@@ -149,7 +154,7 @@ if (securityContext.authorizationId.component == "system/fiddles/users") {
 
     openidm.update("system/fiddles/users/" + securityContext.authorizationId.id, null, [
         "fiddles" : [
-            ["schema_def_id": schema_def.schema_def_id, "query_id": query.query_id]
+            ["schema_def_id": schema_def ? schema_def.schema_def_id : 0, "query_id": query.query_id]
         ]
     ])
 

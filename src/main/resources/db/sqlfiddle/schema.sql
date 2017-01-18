@@ -138,7 +138,7 @@ ALTER SEQUENCE hosts_id_seq OWNED BY hosts.id;
 --
 
 CREATE TABLE queries (
-    schema_def_id integer NOT NULL,
+    schema_def_id integer,
     sql text,
     md5 character varying(32),
     id integer NOT NULL,
@@ -156,7 +156,7 @@ ALTER TABLE queries OWNER TO postgres;
 CREATE TABLE query_sets (
     id integer NOT NULL,
     query_id integer NOT NULL,
-    schema_def_id integer NOT NULL,
+    schema_def_id integer,
     row_count integer,
     execution_time integer,
     succeeded smallint,
@@ -340,7 +340,7 @@ ALTER TABLE ONLY hosts
 --
 
 ALTER TABLE ONLY queries
-    ADD CONSTRAINT queries_pkey PRIMARY KEY (id, schema_def_id);
+    ADD CONSTRAINT queries_pkey PRIMARY KEY (id);
 
 
 --
@@ -348,7 +348,7 @@ ALTER TABLE ONLY queries
 --
 
 ALTER TABLE ONLY query_sets
-    ADD CONSTRAINT query_sets_pkey PRIMARY KEY (id, schema_def_id, query_id);
+    ADD CONSTRAINT query_sets_pkey PRIMARY KEY (id, query_id);
 
 
 --

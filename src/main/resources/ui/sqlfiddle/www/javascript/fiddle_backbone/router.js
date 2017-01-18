@@ -14,8 +14,10 @@ define([
             routes: {
                 "!:db_type_id": "DBType", // #!1
                 "!:db_type_id/:short_code":"SchemaDef", // #!1/abc12
-                "!:db_type_id/:short_code/:query_id":"Query", // #!1/abc12/1
-                "!:db_type_id/:short_code/:query_id/:set_id":"SetAnchor" // #!1/abc12/1/1
+                "!:db_type_id/:short_code/:query_id":"QueryWithSchema", // #!1/abc12/1
+                "!:db_type_id//:query_id":"Query", // #!1//1
+                "!:db_type_id/:short_code/:query_id/:set_id":"SetAnchorWithSchema", // #!1/abc12/1/1
+                "!:db_type_id//:query_id/:set_id":"SetAnchor" // #!1//1/1
             },
 
             DBType: function (db_type_id) {
@@ -29,10 +31,19 @@ define([
                 this.loadContent(db_type_id, "!" + db_type_id + "/" + short_code);
             },
 
-            Query: function (db_type_id, short_code, query_id) {
+            Query: function (db_type_id, query_id) {
+                this.QueryWithSchema(db_type_id, "", query_id);
+            },
+
+            QueryWithSchema: function (db_type_id, short_code, query_id) {
                 this.loadContent(db_type_id, "!" + db_type_id + "/" + short_code + "/" + query_id);
             },
-            SetAnchor: function (db_type_id, short_code, query_id, set_id) {
+
+            SetAnchor: function (db_type_id, query_id, set_id) {
+                this.SetAnchorWithSchema(db_type_id, "", query_id, set_id);
+            },
+
+            SetAnchorWithSchema: function (db_type_id, short_code, query_id, set_id) {
 
                 var selectSet = function () {
                     if ($("#set_" + set_id).length) {
@@ -72,7 +83,7 @@ define([
                 .then(function (resp) {
                     schemaDef.set("loading", false);
 
-                    if (resp["short_code"]) {
+                    if (resp["short_code"] || resp["id"]) {
 
                         var selectedDBType = dbTypes.getSelectedType();
 

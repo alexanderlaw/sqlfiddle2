@@ -16,7 +16,7 @@ define ([
             return _.chain(usedFiddles)
                     .groupBy(function (f) {
                         // extract just the !db/schema portion
-                        return (/^(!\d+\/[^\/]+)/).exec(f.fragment)[0];
+                        return (/^(!\d+\/[^\/]*)/).exec(f.fragment)[0];
                     })
                     .pairs()
                     .map(function (group) {

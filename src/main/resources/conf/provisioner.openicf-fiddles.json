@@ -500,6 +500,12 @@
                     "nativeName" : "__UID__",
                     "nativeType" : "string"
                 },
+                "db_type_id" : {
+                    "type" : "integer",
+                    "required" : true,
+                    "nativeName" : "db_type_id",
+                    "nativeType" : "integer"
+                },
                 "md5" : {
                     "type" : "string",
                     "nativeName" : "__NAME__",

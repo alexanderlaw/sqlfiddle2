@@ -103,6 +103,51 @@ import org.forgerock.openicf.misc.scriptedcommon.MapFilterVisitor
 
     }
 
+    def findAdminDatabase = { db_type_id, connection ->
+        def sql = new Sql(connection)
+        def result = []
+
+        sql.eachRow("""\
+            SELECT
+                d.id as db_type_id,
+                d.simple_name,
+                d.full_name,
+                d.list_database_script,
+                d.jdbc_class_name,
+                h.id as host_id,
+                h.jdbc_url_template,
+                h.default_database,
+                h.admin_username,
+                h.admin_password
+            FROM
+                db_types d
+                    INNER JOIN hosts h ON
+                        d.id = h.db_type_id
+            WHERE h.db_type_id = ?
+            """, [db_type_id.toInteger()]) {
+            def name = db_type_id.toString()
+            def url_template = it.jdbc_url_template
+            def populatedUrl = it.jdbc_url_template.replace("#databaseName#", it.default_database)
+            def jdbc_class_name = it.jdbc_class_name
+            def simple_name = it.simple_name
+            def full_name = it.full_name
+            def admin_username = it.admin_username
+            def admin_password = it.admin_password
+            handler {
+                uid name as String
+                id name
+                attribute 'db_type_id', db_type_id.toInteger()
+                attribute 'jdbc_class_name', jdbc_class_name
+                attribute 'simple_name', simple_name
+                attribute 'full_name', full_name
+                attribute 'jdbc_url', populatedUrl
+                attribute 'admin_username', admin_username
+                attribute 'admin_password', admin_password
+                attribute 'jdbc_url_template', url_template
+            }
+        }
+        sql.close()
+    }
 
 def schema_name = null
 
@@ -121,6 +166,9 @@ if (filter != null) {
 switch ( objectClass.objectClassValue ) {
     case "databases":
         findDatabase(schema_name, connection)
+    break
+    case "admin_databases":
+        findAdminDatabase(schema_name, connection)
     break
 }
 

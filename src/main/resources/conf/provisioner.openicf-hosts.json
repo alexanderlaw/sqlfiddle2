@@ -153,6 +153,100 @@
                     ]
                 }
             }
+        },
+        "admin_databases" : {
+            "$schema" : "http://json-schema.org/draft-03/schema",
+            "id" : "admin_databases",
+            "type" : "object",
+            "nativeType" : "admin_databases",
+            "properties" : {
+                "db_type_id" : {
+                    "type" : "integer",
+                    "required" : true,
+                    "nativeName" : "db_type_id",
+                    "nativeType" : "integer",
+                    "flags" : [
+                        "NOT_UPDATEABLE"
+                    ]
+                },
+                "jdbc_url" : {
+                    "type" : "string",
+                    "required" : true,
+                    "nativeName" : "jdbc_url",
+                    "nativeType" : "string",
+                    "flags" : [
+                        "NOT_CREATABLE",
+                        "NOT_UPDATEABLE"
+                    ]
+                },
+                "jdbc_class_name" : {
+                    "type" : "string",
+                    "required" : true,
+                    "nativeName" : "jdbc_class_name",
+                    "nativeType" : "string",
+                    "flags" : [
+                        "NOT_CREATABLE",
+                        "NOT_UPDATEABLE"
+                    ]
+                },
+                "schema_name" : {
+                    "type" : "string",
+                    "required" : true,
+                    "nativeName" : "__NAME__",
+                    "nativeType" : "string",
+                    "flags" : [
+                        "NOT_UPDATEABLE"
+                    ]
+                },
+                "admin_username" : {
+                    "type" : "string",
+                    "required" : true,
+                    "nativeName" : "admin_username",
+                    "nativeType" : "string",
+                    "flags" : [
+                        "NOT_UPDATEABLE"
+                    ]
+                },
+                "admin_password" : {
+                    "type" : "string",
+                    "required" : true,
+                    "nativeName" : "admin_password",
+                    "nativeType" : "string",
+                    "flags" : [
+                        "NOT_UPDATEABLE"
+                    ]
+                },
+                "simple_name" : {
+                    "type" : "string",
+                    "required" : false,
+                    "nativeName" : "simple_name",
+                    "nativeType" : "string",
+                    "flags" : [
+                        "NOT_CREATABLE",
+                        "NOT_UPDATEABLE"
+                    ]
+                },
+                "full_name" : {
+                    "type" : "string",
+                    "required" : false,
+                    "nativeName" : "full_name",
+                    "nativeType" : "string",
+                    "flags" : [
+                        "NOT_CREATABLE",
+                        "NOT_UPDATEABLE"
+                    ]
+                },
+                "jdbc_url_template" : {
+                    "type" : "string",
+                    "required" : true,
+                    "nativeName" : "jdbc_url_template",
+                    "nativeType" : "string",
+                    "flags" : [
+                        "NOT_CREATABLE",
+                        "NOT_UPDATEABLE"
+                    ]
+                }
+            }
         }
     },
     "operationOptions" : { }

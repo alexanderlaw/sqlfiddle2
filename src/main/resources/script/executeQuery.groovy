@@ -1,5 +1,6 @@
 import org.forgerock.json.resource.SecurityContext
 import groovy.json.JsonBuilder
+import groovy.json.JsonSlurper
 import groovy.transform.InheritConstructors
 import groovy.sql.Sql
 import groovy.sql.DataSet
@@ -10,6 +11,8 @@ import javax.xml.transform.stream.StreamResult
 import javax.xml.transform.stream.StreamSource
 import java.io.ByteArrayOutputStream
 import java.nio.charset.Charset
+import com.postgrespro.sqlfiddle.PgExecutor
+import java.sql.SQLException
 
 @InheritConstructors
 class PostgreSQLException extends Exception {}
@@ -179,6 +182,41 @@ if (db_type.context == "host") {
         return response
     }
 
+    if (db_type.simple_name == "PostgreSQL") {
+        def adminDatabase = openidm.read("system/hosts/admin_databases/" + content.db_type_id)
+
+        def messages = StringBuilder.newInstance()
+        try {
+            def executor = new PgExecutor()
+            def queryResult = executor.execute(
+              adminDatabase.jdbc_class_name, adminDatabase.jdbc_url,
+              adminDatabase.admin_username, adminDatabase.admin_password,
+              adminDatabase.jdbc_url_template,
+              securityContext.authorizationId.id,
+              content.preparation, content.sql,
+              content.statement_separator,
+              0, messages)
+
+            println "messages:" + messages
+
+            // TODO: Rid of double conversion
+            def jsonObj = new JsonSlurper().parseText(queryResult.toString())
+            response.sets = jsonObj
+        } catch (Exception e) {
+            println "exception:" + e.getMessage()
+            response.sets = [
+                [
+                    STATEMENT: "",
+                    RESULTS: [DATA: [], COLUMNS: []],
+                    SUCCEEDED: false,
+                    ERRORMESSAGE: 'Query execution failed: ' + e.getMessage() + "\n" + messages.toString()
+                ]
+            ]
+        }
+// TODO: openidm.update("system/fiddles/queries/" + query._id, null, query)
+        return response
+    }
+
     // schemas that we never deprovision don't need to be created
     if (schema_def.deprovision) {
         def schema = openidm.action("endpoint/createSchema", "create", schema_def)
@@ -229,7 +267,7 @@ if (db_type.context == "host") {
             }
             if (db_type.simple_name == "Oracle") {
                 //hostConnection.execute("INSERT INTO system." + deferred_table + " VALUES (2)")
-            } else if (db_type.simple_name == "PostgreSQL" ) {
+            } else if (db_type.simple_name == "PostgreSQL") {
                 hostConnection.execute("INSERT INTO " + deferred_table + " VALUES (2)")
             }
 

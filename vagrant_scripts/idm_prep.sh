@@ -26,6 +26,7 @@ echo "10.0.0.16 OPENIDM_REPO_HOST" >> /etc/hosts
 echo "10.0.0.16 SQLFIDDLE_HOST" >> /etc/hosts
 echo "10.0.0.95 POSTGRESQL95_HOST" >> /etc/hosts
 echo "10.0.0.96 POSTGRESQL96_HOST" >> /etc/hosts
+echo "10.0.0.196 POSTGRESPRO96_HOST" >> /etc/hosts
 
 apt-get --yes update
 apt-get --yes upgrade

@@ -45,6 +45,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     pg.vm.provider "virtualbox" do |v, override|
       v.customize ["modifyvm", :id, "--nictype1", "virtio", "--nictype2", "virtio", "--chipset", "ich9", "--uartmode1", "disconnected"]
+      v.customize ["storagectl", :id, "--name", "SCSI", "--hostiocache", "on"]
     end
 
     pg.vm.provider "aws" do |aws, override|
@@ -62,6 +63,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     pg.vm.provider "virtualbox" do |v, override|
       v.customize ["modifyvm", :id, "--nictype1", "virtio", "--nictype2", "virtio", "--chipset", "ich9", "--uartmode1", "disconnected"]
+      v.customize ["storagectl", :id, "--name", "SCSI", "--hostiocache", "on"]
     end
 
     pg.vm.provider "aws" do |aws, override|
@@ -79,6 +81,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     pg.vm.provider "virtualbox" do |v, override|
       v.customize ["modifyvm", :id, "--nictype1", "virtio", "--nictype2", "virtio", "--chipset", "ich9", "--uartmode1", "disconnected"]
+      v.customize ["storagectl", :id, "--name", "SCSI", "--hostiocache", "on"]
     end
 
     pg.vm.provider "aws" do |aws, override|

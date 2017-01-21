@@ -21,7 +21,7 @@ echo "deb http://repo.postgrespro.ru/pgpro-9.6/ubuntu $(lsb_release -cs) main" >
 wget --quiet -O - http://repo.postgrespro.ru/pgpro-9.6/keys/GPG-KEY-POSTGRESPRO | apt-key add -
 apt-get --yes update
 apt-get --yes upgrade
-apt-get --yes install postgrespro-$pgver postgrespro-contrib-$pgver
+apt-get --yes install postgrespro-$pgver postgrespro-contrib-$pgver unzip
 
 pg_dropcluster --stop $pgver main
 echo "listen_addresses = '*'" >> /etc/postgresql-common/createcluster.conf
@@ -38,3 +38,13 @@ iptables -A INPUT -p tcp --dport 5432 -j ACCEPT
 # initialize the template database, used by fiddle databases running in this env
 psql -U postgres postgres < /vagrant/src/main/resources/db/postgresql/initial_setup.sql
 psql -U postgres db_template < /vagrant/src/main/resources/db/postgresql/db_template.sql
+
+# Load demo database
+wget -nv https://edu.postgrespro.ru/demo_small.zip -O /tmp/demo_small.zip
+unzip /tmp/demo_small.zip -d /tmp/
+# Load database as user "admin" to set him as owner of all the objects
+psql -U postgres -c "CREATE ROLE admin WITH LOGIN SUPERUSER"
+# Rename demo database to demo_bookings
+sed -e 's/^\(DROP DATABASE\|CREATE DATABASE\|\\connect\) demo\b/\1 demo_bookings/' /tmp/demo_small.sql | psql -U admin postgres
+psql -U postgres -c "ALTER ROLE admin WITH NOLOGIN; ALTER DATABASE demo_bookings OWNER TO postgres"
+rm /tmp/demo_small.zip /tmp/demo_small.sql

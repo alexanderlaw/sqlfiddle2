@@ -9,6 +9,7 @@ define([
     './models/Query',
 
     './views/DBTypesList',
+    './views/QueryEnvironmentsList',
     './views/SchemaDef',
     './views/Query',
     './views/LoginDialog',
@@ -18,13 +19,13 @@ define([
     './router',
     'utils/renderTerminator',
     'utils/openidconnect',
-    'underscore', 'jquery'
+    'Backbone', 'underscore', 'jquery'
 ], function (
         browserEngines,
         OpenIDConnectProviers, UsedFiddle, MyFiddleHistory, DBTypesList, SchemaDef, Query,
-        DBTypesListView, SchemaDefView, QueryView, LoginDialog, UserOptions, MyFiddleDialog,
+        DBTypesListView, QueryEnvironmentsList, SchemaDefView, QueryView, LoginDialog, UserOptions, MyFiddleDialog,
         Router, renderTerminator, openidconnect,
-        _, $
+        Backbone, _, $
     ) {
 
 var obj = {
@@ -48,6 +49,11 @@ var obj = {
         var dbTypesListView = new DBTypesListView({
             el: $("#db_type_id")[0],
             collection: dbTypes
+        });
+
+        var queryEnvironmentsListView = new QueryEnvironmentsList({
+            el: $("#environment")[0],
+            "schemaDef": schemaDef
         });
 
         var schemaDefView = new SchemaDefView({
@@ -111,7 +117,9 @@ var obj = {
 
         query.on("reloaded", function () {
             this.set({"pendingChanges": false}, {silent: true});
+            queryEnvironmentsListView.setSelectedEnvironment(this.get("environment"));
 
+            queryEnvironmentsListView.render(dbTypes.getSelectedType().getEnvironments());
             queryView.render();
         });
 
@@ -240,6 +248,7 @@ var obj = {
 
             // make sure everything is up-to-date on the page
             dbTypesListView.render();
+            queryEnvironmentsListView.render(this.getSelectedType().getEnvironments());
             if (this.getSelectedType().liveSchema()) {
                 $(".panel.schema .action_buttons").hide();
                 $(".helpTip").css("display", "block");
@@ -277,6 +286,7 @@ var obj = {
 
         dbTypes.on("change", function () {
             dbTypesListView.render();
+            queryEnvironmentsListView.render(this.getSelectedType().getEnvironments());
             if (this.getSelectedType().liveSchema)
                 router.navigate("!" + this.getSelectedType().id + "/" + (schemaDef.get("short_code") ? schemaDef.get("short_code") : "") +  (query.id ? ("/" + query.id) : ""));
             else if (

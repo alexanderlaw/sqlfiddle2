@@ -194,6 +194,7 @@ if (db_type.context == "host") {
               adminDatabase.jdbc_url_template,
               securityContext.authorizationId.id,
               content.preparation, content.sql,
+              content.environment,
               content.statement_separator,
               0, messages)
 

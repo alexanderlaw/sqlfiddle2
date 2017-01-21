@@ -60,6 +60,7 @@ CREATE TABLE db_types (
     jdbc_class_name character varying(50),
     drop_script_template text,
     custom_jdbc_attributes character varying(100),
+    available_environments character varying(500),
     batch_separator character varying(5),
     notes character varying(250),
     sample_fragment character varying(50),

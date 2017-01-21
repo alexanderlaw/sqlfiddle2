@@ -147,9 +147,20 @@ public class PgExecutor {
         return result;
     }
 
-    private Boolean prepareDbUser(Connection adminConn, String username, String password) throws SQLException {
+    private Boolean validTemplateIdentifier(String template_db) {
+        return (template_db != null && template_db.length() > 0 &&
+                !(template_db.contains("\"") || template_db.contains("'") || template_db.contains("\\")));
+    }
+
+    private Boolean prepareDbUser(Connection adminConn, String template_db, String username, String password) throws SQLException {
         this.execQuery(adminConn, String.format("CREATE ROLE \"%s\" WITH LOGIN PASSWORD '%s'", username, password));
-        this.execQuery(adminConn, String.format("CREATE DATABASE \"%s\" WITH OWNER \"%s\"", username, username));
+        this.execQuery(adminConn, String.format("CREATE DATABASE \"%s\" WITH %s OWNER \"%s\"", username,
+             (this.validTemplateIdentifier(template_db) ? "TEMPLATE \"" + template_db + "\"" : ""), username));
+        return true;
+    }
+
+    private Boolean reassignObjects(Connection adminConn, String username) throws SQLException {
+        this.execQuery(adminConn, String.format("REASSIGN OWNED BY admin TO \"%s\"", username));
         return true;
     }
 
@@ -170,6 +181,7 @@ public class PgExecutor {
                           String adminName, String adminPassword,
                           String connectionUrlTemplate, String userName,
                           String preparationScript, String fullQuery,
+                          String template_db,
                           String querySeparator,
                           int isolationLevel,
                           StringBuilder log) throws Exception {
@@ -177,12 +189,18 @@ public class PgExecutor {
         JSONArray results = new JSONArray();
         String username = this.generateUsername(userName);
         Connection adminConnection = null;
+        Connection adminNewDbConnection = null;
         Connection userConnection = null;
         try {
             Class.forName(driverClass);
             adminConnection = DriverManager.getConnection(adminConnectionUrl, adminName, adminPassword);
             String password = this.generatePassword();
-            this.prepareDbUser(adminConnection, username, password);
+            this.prepareDbUser(adminConnection, template_db, username, password);
+            if (this.validTemplateIdentifier(template_db)) {
+                adminNewDbConnection = DriverManager.getConnection(connectionUrlTemplate.replaceAll("#databaseName#", username), adminName, adminPassword);
+                this.reassignObjects(adminNewDbConnection, username);
+                adminNewDbConnection.close();
+            }
 
             userConnection = DriverManager.getConnection(connectionUrlTemplate.replaceAll("#databaseName#", username), username, password);
             this.prepareEnvironment(userConnection, preparationScript);
@@ -201,6 +219,13 @@ public class PgExecutor {
                     userConnection.close();
                 } catch (Exception ex) {
                     log.append("Failed to close user connection: " + ex.getMessage() + "\n");
+                }
+            }
+            if (adminNewDbConnection != null) {
+                try {
+                    adminNewDbConnection.close();
+                } catch (Exception ex) {
+                    log.append("Failed to close admin connection (2): " + ex.getMessage() + "\n");
                 }
             }
 

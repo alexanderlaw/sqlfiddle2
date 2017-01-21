@@ -1,0 +1,9 @@
+        Environment:
+        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+            {{selectedEnvironmentTitle}} <b class="caret"></b>
+        </a>
+        <ul class="dropdown-menu">
+            {{#each environments}}
+            <li data-environment-id="{{this.id}}" class="{{this.className}}"><a href="#"><i class="icon-tag"></i>{{this.title}}</a></li>
+            {{/each}}
+        </ul>

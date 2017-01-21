@@ -5,6 +5,7 @@ define(["Backbone"], function (Backbone) {
             "notes":"",
             "simple_name": "",
             "full_name": "",
+            "available_environments": null,
             "selected": false,
             "context": "host",
             "className": "",
@@ -12,6 +13,15 @@ define(["Backbone"], function (Backbone) {
         },
         liveSchema: function () {
             return this.get("simple_name") == "PostgreSQL";
+        },
+        getEnvironments : function () {
+            if (!this.get("available_environments")) return null;
+            var environments = new Backbone.Collection();
+            environments.add({id: "", title: "<Default>"});
+            $.each(this.get("available_environments").split(","), function(index, env) {
+                environments.add({id: env, title: env});
+            });
+            return environments;
         }
     });
 });

@@ -510,6 +510,7 @@ switch ( objectClass.objectClassValue ) {
             d.simple_name,
             d.jdbc_class_name,
             d.sample_fragment,
+            d.available_environments,
             d.batch_separator,
             d.execution_plan_prefix,
             d.execution_plan_suffix,
@@ -527,6 +528,7 @@ switch ( objectClass.objectClassValue ) {
             d.simple_name,
             d.jdbc_class_name,
             d.sample_fragment,
+            d.available_environments,
             d.batch_separator,
             d.execution_plan_prefix,
             d.execution_plan_suffix,
@@ -543,6 +545,7 @@ switch ( objectClass.objectClassValue ) {
             attribute 'simple_name', row.simple_name
             attribute 'className', row.jdbc_class_name
             attribute 'sample_fragment', row.sample_fragment
+            attribute 'available_environments', row.available_environments
             attribute 'batch_separator', row.batch_separator
             attribute 'execution_plan_prefix', row.execution_plan_prefix
             attribute 'execution_plan_suffix', row.execution_plan_suffix

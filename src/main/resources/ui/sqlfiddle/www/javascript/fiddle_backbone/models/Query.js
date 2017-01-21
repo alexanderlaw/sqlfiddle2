@@ -27,7 +27,7 @@ define(["./OpenIDMResource", "Backbone"], function (idm, Backbone) {
                     db_type_id: this.get("schemaDef").get("dbType").id,
                     schema_short_code: this.get("schemaDef").get("short_code"),
                     statement_separator: this.get("statement_separator"),
-                    environment: "", //TODO: implement DB select
+                    environment: this.get("schemaDef").get("environment"),
                     preparation: this.get("schemaDef").get("ddl"),
                     sql: this.get("sql")
                 }

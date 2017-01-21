@@ -299,6 +299,16 @@
                         "NOT_UPDATEABLE"
                     ]
                 },
+                "available_environments" : {
+                    "type" : "string",
+                    "required" : false,
+                    "nativeName" : "available_environments",
+                    "nativeType" : "string",
+                    "flags" : [
+                        "NOT_CREATABLE",
+                        "NOT_UPDATEABLE"
+                    ]
+                },
                 "batch_separator" : {
                     "type" : "string",
                     "required" : false,
@@ -480,6 +490,9 @@
                             "type" : "string"
                         },
                         "full_name" : {
+                            "type" : "string"
+                        },
+                        "available_environments": {
                             "type" : "string"
                         },
                         "batch_separator" : {

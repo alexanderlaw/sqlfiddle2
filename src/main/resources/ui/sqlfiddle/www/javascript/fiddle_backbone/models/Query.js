@@ -6,6 +6,7 @@ define(["./OpenIDMResource", "Backbone"], function (idm, Backbone) {
             "id": 0,
             "sql": "",
             "sets": [],
+            "preparationTime": null,
             "pendingChanges": false,
             "statement_separator": "//"
         },
@@ -57,6 +58,7 @@ define(["./OpenIDMResource", "Backbone"], function (idm, Backbone) {
                 } else {
                     thisModel.set({
                         "id": resp["ID"],
+                        "preparationTime": resp["PREPARATIONTIME"],
                         "sets": resp["sets"]
                     });
                 }

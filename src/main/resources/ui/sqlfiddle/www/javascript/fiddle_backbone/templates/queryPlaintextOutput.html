@@ -1,3 +1,8 @@
+{{#if preparationTime}}
+<div class="alert alert-success database-messages">
+Preparation Time: {{preparationTime}}ms
+</div>
+{{/if}}
 {{#each_with_index sets}}
 <div class="set" id="set_{{index}}">
     {{#if this.RESULTS}}{{#if this.RESULTS.DATA.length}}

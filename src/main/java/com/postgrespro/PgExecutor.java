@@ -8,7 +8,18 @@ import java.time.format.DateTimeFormatter;
 import java.text.SimpleDateFormat;
 import org.json.*;
 
-public class PgExecutor {
+
+public class PgExecutor implements AutoCloseable {
+
+    private StringBuilder log;
+    private Connection adminConnection = null;
+    private Connection adminNewDbConnection = null;
+    private Connection userConnection = null;
+    private String username;
+
+    public PgExecutor(StringBuilder log) {
+        this.log = log;
+    }
 
     private String generateUsername(String userName) {
         long mstime = System.currentTimeMillis();
@@ -98,7 +109,7 @@ public class PgExecutor {
         return result;
     }
 
-    private JSONObject getQueryResult(Connection conn, String sql, StringBuilder log)
+    private JSONObject getQueryResult(Connection conn, String sql)
       throws SQLException, JSONException, IOException {
         JSONObject result = new JSONObject();
         Boolean plan = sql.matches("(?i:\\s*EXPLAIN.*)");
@@ -177,73 +188,79 @@ public class PgExecutor {
         return true;
     }
 
-    public JSONArray execute(String driverClass, String adminConnectionUrl,
-                          String adminName, String adminPassword,
-                          String connectionUrlTemplate, String userName,
-                          String preparationScript, String fullQuery,
-                          String template_db,
-                          String querySeparator,
-                          int isolationLevel,
-                          StringBuilder log) throws Exception {
+    public Boolean prepare(String driverClass, String adminConnectionUrl,
+                        String adminName, String adminPassword,
+                        String connectionUrlTemplate, String userName,
+                        String preparationScript,
+                        String template_db,
+                        int isolationLevel) throws Exception {
 
         JSONArray results = new JSONArray();
-        String username = this.generateUsername(userName);
-        Connection adminConnection = null;
-        Connection adminNewDbConnection = null;
-        Connection userConnection = null;
-        try {
-            Class.forName(driverClass);
-            adminConnection = DriverManager.getConnection(adminConnectionUrl, adminName, adminPassword);
-            String password = this.generatePassword();
-            this.prepareDbUser(adminConnection, template_db, username, password);
-            if (this.validTemplateIdentifier(template_db)) {
-                adminNewDbConnection = DriverManager.getConnection(connectionUrlTemplate.replaceAll("#databaseName#", username), adminName, adminPassword);
-                this.reassignObjects(adminNewDbConnection, username);
-                adminNewDbConnection.close();
-            }
+        username = this.generateUsername(userName);
 
-            userConnection = DriverManager.getConnection(connectionUrlTemplate.replaceAll("#databaseName#", username), username, password);
-            this.prepareEnvironment(userConnection, preparationScript);
+        Class.forName(driverClass);
+        adminConnection = DriverManager.getConnection(adminConnectionUrl, adminName, adminPassword);
+        String password = this.generatePassword();
+        this.prepareDbUser(adminConnection, template_db, this.username, password);
+        if (this.validTemplateIdentifier(template_db)) {
+            adminNewDbConnection = DriverManager.getConnection(connectionUrlTemplate.replaceAll("#databaseName#", this.username), adminName, adminPassword);
+            this.reassignObjects(adminNewDbConnection, this.username);
+            adminNewDbConnection.close();
+        }
 
-            for (String query : fullQuery.split("[\r\n]" + (querySeparator != null ? querySeparator : "\\") + "[\r\n]")) {
-                log.append("query: " + query + "\n");
-                if (query.trim().length() > 0) {
-                    JSONObject result = this.getQueryResult(userConnection, query, log);
-                    results.put(result);
-                    log.append("result: " + result.toString());
-                }
-            }
-        } finally {
-            if (userConnection != null) {
-                try {
-                    userConnection.close();
-                } catch (Exception ex) {
-                    log.append("Failed to close user connection: " + ex.getMessage() + "\n");
-                }
-            }
-            if (adminNewDbConnection != null) {
-                try {
-                    adminNewDbConnection.close();
-                } catch (Exception ex) {
-                    log.append("Failed to close admin connection (2): " + ex.getMessage() + "\n");
-                }
-            }
+        userConnection = DriverManager.getConnection(connectionUrlTemplate.replaceAll("#databaseName#", this.username), this.username, password);
+        this.prepareEnvironment(userConnection, preparationScript);
 
-            if (adminConnection != null) {
-                try {
-                    this.destroyDbUser(adminConnection, username);
-                } catch (Exception ex) {
-                    log.append("Failed to destroy user environment: " + ex.getMessage() + "\n");
-                }
+        return true;
+    }
 
-                try {
-                    adminConnection.close();
-                } catch (Exception ex) {
-                    log.append("Failed to close admin connection: " + ex.getMessage() + "\n");
-                }
+    public JSONArray execute(String fullQuery, String querySeparator) throws Exception {
+
+        JSONArray results = new JSONArray();
+
+        for (String query : fullQuery.split("[\r\n]" + (querySeparator != null ? querySeparator : "\\") + "[\r\n]")) {
+            this.log.append("query: " + query + "\n");
+            if (query.trim().length() > 0) {
+                JSONObject result = this.getQueryResult(userConnection, query);
+                results.put(result);
+                this.log.append("result: " + result.toString());
             }
         }
         return results;
     }
 
+
+    public void close() {
+        if (this.userConnection != null) {
+            try {
+                this.userConnection.close();
+            } catch (Exception ex) {
+                this.log.append("Failed to close user connection: " + ex.getMessage() + "\n");
+            }
+            this.userConnection = null;
+        }
+        if (this.adminNewDbConnection != null) {
+            try {
+                this.adminNewDbConnection.close();
+            } catch (Exception ex) {
+                this.log.append("Failed to close admin connection (2): " + ex.getMessage() + "\n");
+            }
+            this.adminNewDbConnection = null;
+        }
+
+        if (this.adminConnection != null) {
+            try {
+                this.destroyDbUser(this.adminConnection, this.username);
+            } catch (Exception ex) {
+                this.log.append("Failed to destroy user environment: " + ex.getMessage() + "\n");
+            }
+
+            try {
+                this.adminConnection.close();
+            } catch (Exception ex) {
+                this.log.append("Failed to close admin connection: " + ex.getMessage() + "\n");
+            }
+            this.adminConnection = null;
+        }
+    }
 }

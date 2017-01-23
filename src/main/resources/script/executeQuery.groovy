@@ -186,17 +186,19 @@ if (db_type.context == "host") {
         def adminDatabase = openidm.read("system/hosts/admin_databases/" + content.db_type_id)
 
         def messages = StringBuilder.newInstance()
+        def executor = new PgExecutor(messages)
         try {
-            def executor = new PgExecutor()
-            def queryResult = executor.execute(
+            long startTime = (new Date()).toTimestamp().getTime()
+            def prepared = executor.prepare(
               adminDatabase.jdbc_class_name, adminDatabase.jdbc_url,
               adminDatabase.admin_username, adminDatabase.admin_password,
               adminDatabase.jdbc_url_template,
               securityContext.authorizationId.id,
-              content.preparation, content.sql,
-              content.environment,
-              content.statement_separator,
-              0, messages)
+              content.preparation, content.environment,
+              0)
+            response.PREPARATIONTIME = ((new Date()).toTimestamp().getTime() - startTime)
+
+            def queryResult = executor.execute(content.sql, content.statement_separator)
 
             println "messages:" + messages
 
@@ -213,6 +215,8 @@ if (db_type.context == "host") {
                     ERRORMESSAGE: 'Query execution failed: ' + e.getMessage() + "\n" + messages.toString()
                 ]
             ]
+        } finally {
+            executor.close();
         }
 // TODO: openidm.update("system/fiddles/queries/" + query._id, null, query)
         return response

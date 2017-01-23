@@ -11,6 +11,11 @@ import org.json.*;
 
 public class PgExecutor implements AutoCloseable {
 
+    public int MaxColumnSize = 1000;
+    public int MaxRowCount = 1000;
+    public int MaxResultSetCount = 10;
+    public int MaxQueryDuration = 60; // seconds
+
     private StringBuilder log;
     private Connection adminConnection = null;
     private Connection adminNewDbConnection = null;
@@ -69,6 +74,17 @@ public class PgExecutor implements AutoCloseable {
         return w.toString();
     }
 
+    private String validateString(String arg) {
+        if (arg == null)
+            return arg;
+        if (arg.length() > MaxColumnSize) return arg.substring(0, MaxColumnSize) + " ... " + "(truncated)";
+        return arg;
+    }
+
+    private Object validateArray(Object arg) {
+        return arg;
+    }
+
     private JSONArray getRowData(ResultSet rs, ResultSetMetaData meta) throws SQLException, IOException {
         JSONArray result = new JSONArray();
         for (int i = 1; i <= meta.getColumnCount(); i++) {
@@ -81,10 +97,10 @@ public class PgExecutor implements AutoCloseable {
                     result.put(rs.getDate(i) != null ? new SimpleDateFormat("yyyy-MM-dd").format(rs.getDate(i)) : null);
                     break;
                 case java.sql.Types.CLOB:
-                    result.put(rs.getClob(i) != null ? this.clobToString(rs.getClob(i)) : null);
+                    result.put(this.validateString(rs.getClob(i) != null ? this.clobToString(rs.getClob(i)) : null));
                     break;
                 case java.sql.Types.ARRAY:
-                    result.put(rs.getArray(i) != null ? rs.getArray(i).getArray() : null);
+                    result.put(this.validateArray(rs.getArray(i) != null ? rs.getArray(i).getArray() : null));
                     break;
                 case java.sql.Types.OTHER:
                     // for some reason, getObject is indexed starting at 1 instead of 0
@@ -98,19 +114,19 @@ public class PgExecutor implements AutoCloseable {
                             str = obj.toString();
                         } catch (Exception e) {
                         }
-                        result.put(str);
+                        result.put(this.validateString(str));
                     }
                     break;
 
                 default:
-                    result.put(rs.getString(i));
+                    result.put(this.validateString(rs.getString(i)));
             }
         }
         return result;
     }
 
     private JSONObject getQueryResult(Connection conn, String sql)
-      throws SQLException, JSONException, IOException {
+      throws Exception {
         JSONObject result = new JSONObject();
         Boolean plan = sql.matches("(?i:\\s*EXPLAIN.*)");
 
@@ -119,19 +135,36 @@ public class PgExecutor implements AutoCloseable {
         Statement stmt = null;
         try {
             stmt = conn.createStatement();
+            stmt.setQueryTimeout(MaxQueryDuration);
             Boolean resultSetPresent = stmt.execute(sql);
             result.put("SUCCEEDED", true);
             result.put("EXECUTIONTIME", (System.nanoTime() - startTime) / 1000000);
             JSONArray resultsets = new JSONArray();
+            int rsCount = 0;
             while (resultSetPresent) {
+                rsCount++;
+                if (rsCount > MaxResultSetCount) {
+                    throw new Exception(
+                        String.format(
+                            "Too many resultsets (>%d) returned. Please modify your query text." , MaxResultSetCount
+                        ));
+                }
                 ResultSet rs = stmt.getResultSet();
                 ResultSetMetaData rsmd = rs.getMetaData();
                 JSONObject jsonrs = new JSONObject();
                 jsonrs.put("COLUMNS", getColumnNames(rsmd));
                 JSONArray rows = new JSONArray();
+                int rowCount = 0;
                 while (rs.next()) {
                     rsmd = rs.getMetaData();
                     rows.put(getRowData(rs, rsmd));
+                    rowCount++;
+                    if (rowCount > MaxRowCount) {
+                        throw new Exception(
+                          String.format(
+                           "Too many rows (>%d) returned. Please modify your query to limit the rows number.", MaxRowCount
+                        ));
+                    }
                 }
                 jsonrs.put("DATA", rows);
                 if (plan) {

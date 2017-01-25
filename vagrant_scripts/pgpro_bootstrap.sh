@@ -21,7 +21,10 @@ echo "deb http://repo.postgrespro.ru/pgpro-9.6/ubuntu $(lsb_release -cs) main" >
 wget --quiet -O - http://repo.postgrespro.ru/pgpro-9.6/keys/GPG-KEY-POSTGRESPRO | apt-key add -
 apt-get --yes update
 apt-get --yes upgrade
-apt-get --yes install postgrespro-$pgver postgrespro-contrib-$pgver unzip
+
+echo iptables-persistent iptables-persistent/autosave_v4 boolean true | debconf-set-selections
+echo iptables-persistent iptables-persistent/autosave_v6 boolean true | debconf-set-selections
+apt-get --yes install postgrespro-$pgver postgrespro-contrib-$pgver unzip iptables-persistent
 
 pg_dropcluster --stop $pgver main
 echo "listen_addresses = '*'" >> /etc/postgresql-common/createcluster.conf
@@ -29,6 +32,7 @@ echo "max_connections = 500" >> /etc/postgresql-common/createcluster.conf
 
 pg_createcluster --start $pgver main -- --auth-local=trust
 echo "host    all             all             10.0.0.14/32            md5" >> /etc/postgresql/$pgver/main/pg_hba.conf
+echo "host    all             all             10.0.0.14/32            @authmethodhost@" >> /usr/share/postgresql/$pgver/pg_hba.conf.sample
 echo "host    all             all             10.0.0.24/32            md5" >> /etc/postgresql/$pgver/main/pg_hba.conf
 service postgresql reload
 
@@ -48,3 +52,19 @@ psql -U postgres -c "CREATE ROLE admin WITH LOGIN SUPERUSER"
 sed -e 's/^\(DROP DATABASE\|CREATE DATABASE\|\\connect\) demo\b/\1 demo_bookings/' /tmp/demo_small.sql | psql -U admin postgres
 psql -U postgres -c "ALTER ROLE admin WITH NOLOGIN; ALTER DATABASE demo_bookings OWNER TO postgres"
 rm /tmp/demo_small.zip /tmp/demo_small.sql
+
+# Install pgmanager service
+cp /vagrant/src/main/resources/db/postgresql/pgmanager/com.postgrespro.PGManager.conf /etc/dbus-1/system.d/
+cp /vagrant/src/main/resources/db/postgresql/pgmanager/com.postgrespro.PGManager.service /usr/share/dbus-1/system-services/
+mkdir /opt/pgmanager
+cp /vagrant/src/main/resources/db/postgresql/pgmanager/pgmanager.py /opt/pgmanager/
+systemctl daemon-reload
+
+# Disable outbound network connections
+iptables -t filter -A OUTPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+iptables -t filter -A OUTPUT -m state --state NEW -m owner --uid-owner root -j ACCEPT
+iptables -t filter -A OUTPUT -m state --state NEW -o lo -j ACCEPT
+iptables -t filter -A OUTPUT -m state --state NEW -j LOG --log-level warning \
+  --log-prefix "Outbound connection blocked: " --log-uid
+iptables -t filter -A OUTPUT -m state --state NEW -j DROP
+netfilter-persistent save

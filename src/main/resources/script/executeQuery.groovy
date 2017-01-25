@@ -194,8 +194,7 @@ if (db_type.context == "host") {
               adminDatabase.admin_username, adminDatabase.admin_password,
               adminDatabase.jdbc_url_template,
               securityContext.authorizationId.id,
-              content.preparation, content.environment,
-              0)
+              content.preparation, content.environment)
             response.PREPARATIONTIME = ((new Date()).toTimestamp().getTime() - startTime)
 
             def queryResult = executor.execute(content.sql, content.statement_separator)

@@ -19,7 +19,7 @@ define(["Backbone"], function (Backbone) {
             var environments = new Backbone.Collection();
             environments.add({id: "", title: "<Default>"});
             $.each(this.get("available_environments").split(","), function(index, env) {
-                environments.add({id: env, title: env});
+                environments.add({id: env, title: (env == "*" ? "Dedicated DB Cluster" : env)});
             });
             return environments;
         }

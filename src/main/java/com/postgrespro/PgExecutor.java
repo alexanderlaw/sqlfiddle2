@@ -3,11 +3,13 @@ package com.postgrespro.sqlfiddle;
 import java.io.*;
 import java.sql.*;
 import java.util.Map;
+import java.util.regex.*;
 import java.security.SecureRandom;
 import java.time.format.DateTimeFormatter;
 import java.text.SimpleDateFormat;
 import org.json.*;
 
+enum EnvironmentType { SeparateDb, DedicatedCluster };
 
 public class PgExecutor implements AutoCloseable {
 
@@ -21,6 +23,12 @@ public class PgExecutor implements AutoCloseable {
     private Connection adminNewDbConnection = null;
     private Connection userConnection = null;
     private String username;
+    private String userPassword;
+    private String connectionStringTemplate = null;
+    private EnvironmentType envType;
+    private String dedicatedDbUser = "postgres";
+    private JSONObject dedicatedClusterProperties = null;
+    private Pattern connectPattern = Pattern.compile("(?m)\\A\\s*\\\\connect\\s+(.*)$");
 
     public PgExecutor(StringBuilder log) {
         this.log = log;
@@ -221,27 +229,93 @@ public class PgExecutor implements AutoCloseable {
         return true;
     }
 
+    private JSONObject executeOSCommand(Connection conn, String command) throws Exception {
+        JSONObject result = null;
+        execQuery(conn, "CREATE TEMPORARY TABLE IF NOT EXISTS command_output(output TEXT); TRUNCATE command_output;");
+        execQuery(conn,
+         String.format("COPY command_output FROM PROGRAM 'sh -c \"%s 2>&1; true\"' (DELIMITER E'\01')",
+         command));
+        Statement stmt = conn.createStatement();
+        StringBuilder sb = new StringBuilder();
+        try {
+            Boolean resultSetPresent = stmt.execute("SELECT * FROM command_output");
+            if (!resultSetPresent) throw new Exception("Could not get output of the OS command.");
+            ResultSet rs = stmt.getResultSet();
+            while (rs.next()) {
+                sb.append(rs.getString(1));
+            }
+        } finally {
+            stmt.close();
+        }
+
+        try {
+            result = new JSONObject(sb.toString());
+        } catch (Exception ex) {
+            log.append("Invalid output: " + sb.toString());
+            throw ex;
+        }
+        return result;
+    }
+
+    private JSONObject prepareDedicatedCluster(Connection adminConn, String username) throws Exception {
+        return executeOSCommand(adminConn, String.format(
+         "dbus-send --system --type=method_call --reply-timeout=60000 --print-reply=literal " +
+          "--dest=com.postgrespro.PGManager /com/postgrespro/PGManager " +
+          "com.postgrespro.PGManager.CreateCluster string:%s",
+         username
+        ));
+    }
+
+    private Boolean dropDedicatedCluster(Connection adminConn, JSONObject clusterProperties) throws Exception {
+        JSONObject dropResult  = executeOSCommand(adminConn, String.format(
+         "dbus-send --system --type=method_call --reply-timeout=60000 --print-reply=literal " +
+          "--dest=com.postgrespro.PGManager /com/postgrespro/PGManager " +
+          "com.postgrespro.PGManager.DropCluster string:%s string:%s",
+         clusterProperties.get("user_name"), clusterProperties.get("program_path")
+        ));
+        return true;
+    }
+
     public Boolean prepare(String driverClass, String adminConnectionUrl,
                         String adminName, String adminPassword,
                         String connectionUrlTemplate, String userName,
                         String preparationScript,
-                        String template_db,
-                        int isolationLevel) throws Exception {
+                        String environment) throws Exception {
 
-        JSONArray results = new JSONArray();
-        username = this.generateUsername(userName);
+        this.username = this.generateUsername(userName);
+        String dbusername = null;
 
         Class.forName(driverClass);
         adminConnection = DriverManager.getConnection(adminConnectionUrl, adminName, adminPassword);
-        String password = this.generatePassword();
-        this.prepareDbUser(adminConnection, template_db, this.username, password);
-        if (this.validTemplateIdentifier(template_db)) {
-            adminNewDbConnection = DriverManager.getConnection(connectionUrlTemplate.replaceAll("#databaseName#", this.username), adminName, adminPassword);
-            this.reassignObjects(adminNewDbConnection, this.username);
-            adminNewDbConnection.close();
-        }
 
-        userConnection = DriverManager.getConnection(connectionUrlTemplate.replaceAll("#databaseName#", this.username), this.username, password);
+        if (environment.equals("*")) {
+            envType = EnvironmentType.DedicatedCluster;
+            JSONObject preparationResult = this.prepareDedicatedCluster(adminConnection, this.username);
+            if (preparationResult.has("result")) {
+                dedicatedClusterProperties = (JSONObject)preparationResult.get("result");
+
+                int port = dedicatedClusterProperties.getInt("port_number");
+                dbusername = dedicatedDbUser;
+                userPassword = dedicatedClusterProperties.getString("postgres_password");
+                connectionStringTemplate = connectionUrlTemplate.replaceFirst("(?i)(//[\\w\\d_-]+)(:\\d+)?(/)", "$1:" + port + "$3");
+            } else {
+                String messages = preparationResult.getString("error");
+                dedicatedClusterProperties = null;
+                throw new Exception("Failed to create the dedicated cluster: (" + messages + ")");
+            }
+        } else {
+            envType = EnvironmentType.SeparateDb;
+            userPassword = this.generatePassword();
+            this.prepareDbUser(adminConnection, environment, this.username, userPassword);
+            dbusername = this.username;
+            if (this.validTemplateIdentifier(environment)) {
+                adminNewDbConnection = DriverManager.getConnection(connectionUrlTemplate.replaceAll("#databaseName#", dbusername), adminName, adminPassword);
+                this.reassignObjects(adminNewDbConnection, dbusername);
+                adminNewDbConnection.close();
+            }
+            connectionStringTemplate = connectionUrlTemplate;
+        }
+        userConnection = DriverManager.getConnection(connectionStringTemplate.replaceAll("#databaseName#", dbusername), dbusername, userPassword);
         this.prepareEnvironment(userConnection, preparationScript);
 
         return true;
@@ -254,6 +328,17 @@ public class PgExecutor implements AutoCloseable {
         for (String query : fullQuery.split("[\r\n]" + (querySeparator != null ? querySeparator : "\\") + "[\r\n]")) {
             this.log.append("query: " + query + "\n");
             if (query.trim().length() > 0) {
+                if (envType == EnvironmentType.DedicatedCluster) {
+                    Matcher matcher = connectPattern.matcher(query);
+                    if (matcher.find()) {
+                        userConnection.close();
+                        userConnection = null;
+                        userConnection = DriverManager.getConnection(connectionStringTemplate.replaceAll("#databaseName#", matcher.group(1)), dedicatedDbUser, userPassword);
+                        query = query.substring(matcher.end());
+                        if (query.trim().length() == 0)
+                            continue;
+                    }
+                }
                 JSONObject result = this.getQueryResult(userConnection, query);
                 results.put(result);
                 this.log.append("result: " + result.toString());
@@ -282,10 +367,19 @@ public class PgExecutor implements AutoCloseable {
         }
 
         if (this.adminConnection != null) {
-            try {
-                this.destroyDbUser(this.adminConnection, this.username);
-            } catch (Exception ex) {
-                this.log.append("Failed to destroy user environment: " + ex.getMessage() + "\n");
+            if (envType == EnvironmentType.DedicatedCluster) {
+                try {
+                    if (dedicatedClusterProperties != null)
+                        this.dropDedicatedCluster(this.adminConnection, dedicatedClusterProperties);
+                } catch (Exception ex) {
+                    this.log.append("Failed to drop dedicated cluster: " + ex.getMessage() + "\n");
+                }
+            } else {
+                try {
+                    this.destroyDbUser(this.adminConnection, this.username);
+                } catch (Exception ex) {
+                    this.log.append("Failed to destroy user environment: " + ex.getMessage() + "\n");
+                }
             }
 
             try {

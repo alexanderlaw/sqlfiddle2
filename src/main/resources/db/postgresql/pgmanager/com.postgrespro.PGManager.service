@@ -1,0 +1,4 @@
+[D-BUS Service]
+Name=com.postgrespro.PGManager
+Exec=/opt/pgmanager/pgmanager.py
+User=root

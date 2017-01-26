@@ -83,6 +83,7 @@
                 <include>lib/*</include>
             </includes>
             <excludes>
+                <exclude>bundle/postgresql-fr-osgi-9.3*.jar</exclude>
                 <exclude>conf/endpoint-*.json</exclude>
                 <exclude>conf/ui.context-enduser.json</exclude>
                 <exclude>conf/ui-countries.json</exclude>

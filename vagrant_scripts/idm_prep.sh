@@ -1,6 +1,12 @@
 #!/bin/bash
 set -e
 
+locale=$1
+if [ ! -z $locale ]; then
+    locale-gen $locale
+    localectl set-locale LANG=$locale
+    export LANG=$locale
+fi
 # create a 512mb swapfile
 dd if=/dev/zero of=/swapfile1 bs=1024 count=524288
 chown root:root /swapfile1

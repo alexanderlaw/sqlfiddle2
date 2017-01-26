@@ -135,7 +135,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       override.vm.provision :shell, path: "vagrant_scripts/idm_startup.sh", run: "always"
     end
 
-    idm.vm.provision :shell, path: "vagrant_scripts/idm_prep.sh"
+    idm.vm.provision :shell, path: "vagrant_scripts/idm_prep.sh", :args => [ENV["LANG"]]
     idm.vm.provision :shell, path: "vagrant_scripts/idm_build.sh"
     idm.vm.provision :shell, :inline => "cp /vagrant/src/main/resources/conf/boot/boot.node1.properties /vagrant/target/sqlfiddle/conf/boot/boot.properties"
 

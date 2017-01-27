@@ -241,6 +241,19 @@
                     </execution>
 
                     <execution>
+                        <id>install-i18next</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>wget</goal>
+                        </goals>
+                        <configuration>
+                            <url>https://raw.githubusercontent.com/i18next/i18next/1.7.3/i18next.min.js</url>
+                            <outputDirectory>${project.build.directory}/sqlfiddle/ui/sqlfiddle/www/javascript/libs/</outputDirectory>
+                            <md5>35578b3a6b9c4592c52b742017d3ffd2</md5>
+                        </configuration>
+                    </execution>
+
+                    <execution>
                         <id>install-codemirror</id>
                         <phase>generate-resources</phase>
                         <goals>

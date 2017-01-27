@@ -5,6 +5,7 @@ requirejs.config({
         jqBlockUI: 'libs/jquery/jquery.blockUI',
         jqCookie: 'libs/jquery/jquery.cookie',
         underscore: 'libs/lodash.min',
+        i18next: "libs/i18next.min",
         Backbone: 'libs/backbone-min',
         Bootstrap: 'libs/bootstrap.min',
         Handlebars: 'libs/handlebars',
@@ -27,7 +28,11 @@ requirejs.config({
         },
         jqBlockUI: ['jquery'],
         jqCookie: ['jquery'],
-        Bootstrap: ['jquery']
+        Bootstrap: ['jquery'],
+        i18next: {
+            deps: ['jquery', 'Handlebars'],
+            exports: 'i18next'
+        }
     }
 });
 
@@ -35,11 +40,13 @@ require([
         'jquery',
         'underscore',
         'fiddle_backbone/app',
+        'org/forgerock/commons/ui/common/main/i18nManager',
         'DDLBuilder/ddl_builder',
 
         'Bootstrap',
         'jqBlockUI',
         'jqCookie',
+        'i18next',
 
         'utils/handlebarsHelpers/divider_display',
         'utils/handlebarsHelpers/each_simple_value_with_index',
@@ -50,12 +57,13 @@ require([
         'utils/handlebarsHelpers/code_format',
         'utils/handlebarsHelpers/add'
     ],
-    function($, _, App, ddl_builder) {
+    function($, _, App, i18nManager, ddl_builder) {
 
     $.blockUI.defaults.overlayCSS.cursor = 'auto';
     $.blockUI.defaults.css.cursor = 'auto';
 
     fiddleBackbone = App.initialize();
+    i18nManager.init();
 
     // Now follows miscellaneous UI event bindings
 

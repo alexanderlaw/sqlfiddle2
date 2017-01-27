@@ -33,6 +33,13 @@
             <directoryMode>0700</directoryMode>
             <fileMode>0600</fileMode>
         </fileSet>
+        <fileSet>
+            <directory>${project.build.directory}/idm-staging/openidm/ui/default/admin/public/org</directory>
+            <outputDirectory>/ui/sqlfiddle/www/javascript/org</outputDirectory>
+            <excludes>
+                <exclude>forgerock/commons/ui/common/util/UIUtils.js</exclude>
+            </excludes>
+        </fileSet>
 
         <fileSet>
             <directory>${project.build.directory}/bootstrap-2.3.2/bootstrap/js</directory>

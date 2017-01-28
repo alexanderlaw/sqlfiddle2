@@ -62,8 +62,8 @@ require([
     $.blockUI.defaults.overlayCSS.cursor = 'auto';
     $.blockUI.defaults.css.cursor = 'auto';
 
-    fiddleBackbone = App.initialize();
     i18nManager.init();
+    fiddleBackbone = App.initialize();
 
     // Now follows miscellaneous UI event bindings
 
@@ -103,7 +103,7 @@ require([
             $(".navbar-fixed-top").css("position", "fixed").css("margin", 0);
 
             $("#exit_fullscreen").css('display', 'block');
-            $("#exit_fullscreen span").text("Exit Fullscreen " + option);
+            $("#exit_fullscreen span").text($.i18n.t("control.exitFullscreen"));
             $(".nav-collapse, .btn-navbar, #db_type_label_collapsed .navbar-text").css('display', 'none');
         }
         else

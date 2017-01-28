@@ -1,0 +1,113 @@
+{
+    "control" : {
+        "about" : "About",
+        "addToFavorites" : "Add to favorites",
+        "appendToDdl" : "Append to DDL",
+        "batchSeparator" : "Batch Separator",
+        "buildSchema" : "Build Schema",
+        "chooseAuthProvider" : "Choose OpenID Connect Authentication Provider",
+        "clear" : "Clear",
+        "dateProblems" : "Date problems?",
+        "ddlEditor" : "DDL Editor",
+        "downloadSentryPlanExplorer" : "Download SQL Sentry Plan Explorer (free)",
+        "downloadSqlplan" : "Download .sqlplan",
+        "editFullscreen" : "Edit Fullscreen",
+        "exitFullscreen" : "Exit Fullscreen",
+        "favorites" : "Favorites",
+        "fiddleHistorySession" : "Fiddle History (this session)",
+        "forgetOtherQueries" : "Forget Others",
+        "forgetSchema" : "Forget Schema",
+        "forgetThisQuery" : "Forget This Query",
+        "formatCode" : "Format Code",
+        "link" : "link",
+        "linkNumResultSets" : { "count" : "__count__ result sets", "count_plural" : "__count__ result sets" },
+        "linkNumTables" : { "count" : "__count__ tables", "count_plural" : "__count__ tables" },
+        "login" : "Login",
+        "myFiddles" : "My Fiddles",
+        "previewDdlLink" : "preview ddl",
+        "previewSqlLink" : "preview sql",
+        "queryPanel" : "Query Panel",
+        "queryTerminator" : "Query Terminator",
+        "removeFromFavorites" : "Remove from favorites",
+        "runSql" : "Run SQL",
+        "schemaBrowser" : "Browser",
+        "schemaDiagram" : "Diagram",
+        "schemaPanel" : "Schema Panel",
+        "showAllQueries" : { "count" : "Show All __count__ Queries", "count_plural" : "Show All __count__ Queries"},
+        "testParseDdl" : "Test Parse",
+        "textToDdl" : "Text to DDL",
+        "textToDdlExample" : "Example Input",
+        "userOptions" : "User Options",
+        "viewExecutionPlan" : "View Execution Plan",
+        "viewOnDepesz" : "View on Depesz",
+        "viewSampleFiddle" : "View Sample Fiddle"
+    },
+    "caption" : {
+        "cols_num" : "Cols",
+        "databaseType" : "Database Type",
+        "environment" : "Environment",
+        "executionTime" : "Execution Time",
+        "identifier" : "Identifier",
+        "loginToFiddle" : "Login to SQL Fiddle",
+        "myLastAccess" : "My Last Access",
+        "preparationTime" : "Preparation Time",
+        "productName" : "SQL Fiddle",
+        "recordCount" : "Record Count",
+        "rows_num" : "Rows",
+        "schemaBrowser" : "Schema Browser",
+        "tableName" : "Table Name",
+        "textToDDL" : "Formatted Text Table to DDL",
+        "timeMS" : "ms"
+    },
+    "item" : {
+        "batchSeparator" : {
+            "semiColon" : "Semi-colon",
+            "pipe" : "Pipe",
+            "slash" : "Slash",
+            "doubleSlash" : "Double-slash",
+            "keyword" : "Keyword"
+        },
+        "queryTerminator" : {
+            "semiColon" : "Semi-colon",
+            "pipe" : "Pipe",
+            "slash" : "Slash",
+            "doubleSlash" : "Double-slash",
+            "keyword" : "Keyword"
+        },
+        "output" : {
+            "tabular" : "Tabular",
+            "plaintext" : "Plaintext Output",
+            "markdown" : "Markdown Output"
+        },
+        "environment" : {
+            "default" : "<Default>",
+            "dedicatedDbCluster" : "Dedicated DB Cluster"
+        }
+    },
+    "status" : {
+        "loading" : "Loading...",
+        "buildingSchema" : "Building Schema...",
+        "executingSql" : "Executing SQL...",
+        "schemaReady" : "Schema Ready",
+    },
+    "message" : {
+        "unsavedChanges" : "Warning! You have made changes to your query which will be lost. Continue?",
+        "myFiddlesForAnonymous" : "<strong>Tip for anonymous users:</strong> These fiddle links will only be bookmarked here until you close your browser. If you want to save them longer than that, you have to login and \"favorite\" them by clicking on the star.",
+        "noFiddles" : "No Fiddles Found!",
+        "xhrError" : "Oops! Something went wrong. Try it again and if this keeps happening, email admin@sqlfiddle.com about it."
+    },
+    "hint" : {
+        "buildSchema" : "You can also press Ctrl-Enter while editing",
+        "forgetSchema" : "This will remove the schema and all related queries from your list.",
+        "forgetThisQuery" : "This will remove this query from your list.",
+        "forgetOtherQueries" : "This will remove all other queries for this schema from your list.",
+        "runQuery" : "You can also press Ctrl-Enter while editing",
+        "trySampleFiddle" : "Why not try a sample fiddle to get some wheels turning?"
+    },
+    "description" : {
+        "schemaPanel" : "Use this panel to setup your database problem (CREATE TABLE, INSERT, and whatever other statements you need to prepare a representative sample of your real database). Use \"Text to DDL\" to quickly build your schema objects from text.",
+        "queryPanel" : "Use this panel to try to solve the problem with other SQL statements (SELECTs, etc...). Results will be displayed below. Share your queries by copying and pasting the URL that is generated after each run.",
+        "textToDdlArea" : "Paste formatted text here. CSV, space-separated, pipe-delimited are all valid.",
+        "markdownOutput" : "Markdown is useful for posting on sites like <a href='http://stackoverflow.com' target='_new'>StackOverflow</a> and <a href='http://dba.stackexchange.com' target='_new'>dba.se</a>. Also, those sites are great resources for getting help with database questions!"
+    }
+}

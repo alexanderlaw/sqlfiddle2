@@ -1,0 +1,23 @@
+        <div class="modal-header">
+            <a class="close" data-dismiss="modal">x</a>
+            <h3>{{t "caption.textToDDL"}}</h3>
+        </div>
+
+      <div class="modal-body">
+            <label for="tableName">{{t "caption.tableName"}}: </label><input type="text" id="tableName" value="Table1"><br>
+            <textarea id="raw" cols="40" rows="8" placeholder="{{t 'description.textToDdlArea'}}"></textarea>
+            <hr>
+
+            <pre id="parseResults"></pre>
+
+    </div>
+    <div class="modal-footer">
+        <div class="pull-left">
+            <i class="icon-info-sign"></i>
+            <a href="http://dygraphs.com/date-formats.html" target="_blank">{{t "control.dateProblems"}}</a>
+            |
+            <a href="https://github.com/jakefeasel/DDLBuilder/blob/master/ddl_builder/qunit/fixture.html" target="_blank">{{t "control.textToDdlExample"}}</a>
+        </div>
+        <a href="#" id="appendDDL" class="btn btn-primary">{{t "control.appendToDdl"}}</a>
+        <a href="#" id="parseDDL" class="btn">{{t "control.testParseDdl"}}</a>
+    </div>

@@ -6,9 +6,9 @@
         
     <table class="table table-striped" id="fiddle_history_table">
         <thead>
-            <th>Database Type</th>
-            <th>Identifier</th>
-            <th>My Last Access</th>
+            <th>{{t "caption.databaseType"}}</th>
+            <th>{{t "caption.identifier"}}</th>
+            <th>{{t "caption.myLastAccess"}}</th>
             <th colspan="3">&nbsp;</th>
         </thead>
         <tbody>
@@ -39,7 +39,7 @@
                                     
                                 </ul>
                         </div>  
-                        <a data-container="#myFiddlesModal" href="#{{schemaFragment}}" class="fiddleLink label label-info preview-schema popover-anchor">{{structure.length}} tables</a>
+                        <a data-container="#myFiddlesModal" href="#{{schemaFragment}}" class="fiddleLink label label-info preview-schema popover-anchor">{{#structure.length}}{{p this key="control.linkNumTables.count"}}{{/structure.length}}</a>
 
                     {{else}}
 
@@ -48,16 +48,16 @@
                                 {{ddl}}
                             </div>
                         </div>
-                        <a data-container="#myFiddlesModal" href="#{{schemaFragment}}" class="fiddleLink label label-info preview-ddl popover-anchor">preview ddl</a>
+                        <a data-container="#myFiddlesModal" href="#{{schemaFragment}}" class="fiddleLink label label-info preview-ddl popover-anchor">{{t "control.previewDdlLink"}}</a>
 
                     {{/if}}
                     
                 </td>
     
                 <td>
-                    <button class="btn btn-mini btn-warning forgetSchema" schemaFragment="{{schemaFragment}}" title="This will remove the schema and all related queries from your list.">Forget Schema</button>
+                    <button class="btn btn-mini btn-warning forgetSchema" schemaFragment="{{schemaFragment}}" title="{{t 'hint.forgetSchema'}}">{{t "control.forgetSchema"}}</button>
                     {{#if hasMultipleQueries}}
-                        <button class="btn btn-mini showAll">Show All {{queries.length}} Queries</button>
+                        <button class="btn btn-mini showAll">{{#queries.length}}{{p this key="control.showAllQueries.count"}}{{/queries.length}}</button>
                     {{/if}}
                 </td>
     
@@ -74,9 +74,9 @@
                             <i class="icon-star-empty"></i>
                         {{else}}
                             {{#if favorite}}
-                                <a href="#toggleFavorite" favorite="true" fragment="{{fragment}}" title="Remove from favorites"><i class="icon-star"></i></a>
+                                <a href="#toggleFavorite" favorite="true" fragment="{{fragment}}" title="{{t 'control.removeFromFavorites'}}"><i class="icon-star"></i></a>
                             {{else}}
-                                <a href="#toggleFavorite" favorite="false" fragment="{{fragment}}" title="Add to favorites"><i class="icon-star-empty"></i></a>
+                                <a href="#toggleFavorite" favorite="false" fragment="{{fragment}}" title="{{t 'control.addToFavorites'}}"><i class="icon-star-empty"></i></a>
                             {{/if}}
                         {{/if}}
                     </td>
@@ -88,14 +88,14 @@
                                     {{#each sets}}
                                         <li class="statement_preview"><pre>{{statement_sql}}</pre></li>
                                         {{#if succeeded}}
-                                            <li class="alert alert-success">Rows: {{row_count}} {{#if columns.length}} Cols: {{columns}}{{/if}}</li>
+                                            <li class="alert alert-success">{{t "caption.rows_num"}}: {{row_count}} {{#if columns.length}} {{t "caption.cols_num"}}: {{columns}}{{/if}}</li>
                                         {{else}}
                                             <li class="alert alert-error">{{error_message}}</li>
                                         {{/if}}
                                     {{/each}}
                                 </ol>
                             </div>
-                            <a data-container="#myFiddlesModal" href="#{{fragment}}" class="fiddleLink label label-info result-sets popover-anchor">{{sets.length}} result sets</a>
+                            <a data-container="#myFiddlesModal" href="#{{fragment}}" class="fiddleLink label label-info result-sets popover-anchor">{{#sets.length}}{{p this key="control.linkNumResultSets.count"}}{{/sets.length}}</a>
 
                         {{else}}
 
@@ -104,11 +104,11 @@
                                     {{sql}}
                                 </div>
                             </div>
-                            <a data-container="#myFiddlesModal" href="#{{fragment}}" class="fiddleLink label label-info preview-sql popover-anchor">preview sql</a>
+                            <a data-container="#myFiddlesModal" href="#{{fragment}}" class="fiddleLink label label-info preview-sql popover-anchor">{{t "control.previewSqlLink"}}</a>
 
                         {{/if}}
                     </td>
-                    <td><button class="btn btn-mini btn-warning forgetQuery" fragment="{{fragment}}" title="This will remove this query from your list.">Forget This Query</button>{{#if ../hasMultipleQueries}}<button class="btn btn-mini btn-warning forgetOtherQueries" fragment="{{fragment}}" schemaFragment="{{../schemaFragment}}" title="This will remove all other queries for this schema from your list.">Forget Others</button>{{/if}}</td>
+                    <td><button class="btn btn-mini btn-warning forgetQuery" fragment="{{fragment}}" title="{{t 'hint.forgetThisQuery'}}">{{t "control.forgetThisQuery"}}</button>{{#if ../hasMultipleQueries}}<button class="btn btn-mini btn-warning forgetOtherQueries" fragment="{{fragment}}" schemaFragment="{{../schemaFragment}}" title="{{t 'hint.forgetOtherQueries'}}">{{t "control.forgetOtherQueries"}}</button>{{/if}}</td>
                 </tr>
             {{/each}}
 
@@ -118,15 +118,14 @@
 
         {{#if anonymous}}
             <div class="alert">
-                <strong>Tip for anonymous users:</strong>
-                These fiddle links will only be bookmarked here until you close your browser. If you want to save them longer than that, you have to login and "favorite" them by clicking on the star.
+                {{t "message.myFiddlesForAnonymous"}}
             </div>
         {{/if}}
 
     {{else}}
 
         <div class="alert">
-          <h4 class="alert-heading">No Fiddles Found!</h4> Why not try a sample fiddle to get some wheels turning?
+          <h4 class="alert-heading">{{t "message.noFiddles"}}</h4> {{t "trySampleFiddle"}}
         </div>
 
     {{/if}}

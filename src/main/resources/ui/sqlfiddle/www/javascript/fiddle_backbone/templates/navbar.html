@@ -1,0 +1,65 @@
+        <div class="navbar-inner">
+            <div class="container-fluid">
+                <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </a>
+                <a class="brand" href="">{{t "caption.productName"}}<img src="images/fiddle_transparent_small.png" style="height: 20px;margin-top: -10px;"> </a>
+
+                    <ul class="nav" id="db_type_label_collapsed">
+                        <li class="">
+                        <p class="navbar-text"></p>
+                        </li>
+                    </ul>
+
+                <div class="nav-collapse">
+                    <ul class="nav">
+                        <li class="dropdown" id="db_type_id">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                {{t "status.loading"}} <b class="caret"></b>
+                            </a>
+                        </li>
+
+                        <li class="divider-vertical"></li>
+
+                        <li>
+                            <a id="sample" href="#viewSample"><i class="icon-list-alt"></i>{{t "control.viewSampleFiddle"}}</a>
+                        </li>
+
+                        <li>
+                            <a id="clear" href="#clear"><i class="icon-refresh"></i>{{t "control.clear"}}</a>
+                        </li>
+
+                        <li>
+                            <a href="#textToDDLModal" data-toggle="modal"><i class="icon-wrench"></i>{{t "control.textToDdl"}}</a>
+                        </li>
+
+                        <li class="dropdown" id="userOptions">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <b class="caret"></b>
+                                <i class="icon-tasks"></i>{{t "control.userOptions"}}
+                            </a>
+                            <ul class="dropdown-menu">
+                            </ul>
+                        </li>
+
+
+                    </ul>
+
+                    <ul class="nav pull-right">
+                        <li class="optional">
+                            <a href="about.html"><i class="icon-info-sign"></i>{{ t "control.about"}}</a>
+                        </li>
+                    </ul>
+
+                </div>
+
+                <ul class="nav pull-right" id="exit_fullscreen">
+                    <li class="">
+                    <a href="#"><span>{{t "control.exitFullscreen"}}</span> <i class="icon-resize-small"></i></a>
+                    </li>
+                </ul>
+
+            </div>
+        </div>

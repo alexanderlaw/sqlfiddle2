@@ -1,6 +1,6 @@
 {{#if preparationTime}}
 <div class="alert alert-success database-messages">
-Preparation Time: {{preparationTime}}ms
+{{t "caption.preparationTime"}}: {{preparationTime}}{{t "caption.timeMS"}}
 </div>
 {{/if}}
 {{#each_with_index sets}}
@@ -12,7 +12,7 @@ Preparation Time: {{preparationTime}}ms
 |{{#each_simple_value_with_index this}} {{result_display_padded ../../this/RESULTS/COLUMNWIDTHS}} |{{/each_simple_value_with_index}}{{/each}}
         </pre>
         <div>
-        Record Count: {{this.RESULTS.DATA.length}}
+        {{t "caption.recordCount"}}: {{this.RESULTS.DATA.length}}
         </div>
     {{/if}}{{/if}}
     {{#if this.RESULTSETS}}
@@ -23,18 +23,18 @@ Preparation Time: {{preparationTime}}ms
 |{{#each_simple_value_with_index this}} {{result_display_padded ../../this/COLUMNWIDTHS}} |{{/each_simple_value_with_index}}{{/each}}
         </pre>
         <div>
-        Record Count: {{this.DATA.length}}
+        {{t "caption.recordCount"}}: {{this.DATA.length}}
         </div>
         {{/each_with_index2}}
     {{/if}}
     {{#if this.SUCCEEDED}}
     <div id="messages_{{index}}" class="alert alert-success database-messages">
         <i class="icon-ok"></i>
-        Execution Time: {{this.EXECUTIONTIME}}ms
+        {{t "caption.executionTime"}}: {{this.EXECUTIONTIME}}{{t "caption.timeMS"}}
         {{#if this.RESULTS}}{{#if this.EXECUTIONPLAN.DATA.length}}
-        <a href="#executionPlan" class="executionPlanLink"><i class="icon-plus"></i>View Execution Plan</a>
+        <a href="#executionPlan" class="executionPlanLink"><i class="icon-plus"></i>{{t "control.viewExecutionPlan"}}</a>
         {{/if}}{{/if}}
-        <a href="#!{{../../schemaDef/dbType/id}}/{{../../schemaDef/short_code}}/{{../../id}}/{{index}}" class="setLink"><i class="icon-share-alt"></i> link</a>
+        <a href="#!{{../../schemaDef/dbType/id}}/{{../../schemaDef/short_code}}/{{../../id}}/{{index}}" class="setLink"><i class="icon-share-alt"></i> {{t "control.link"}}</a>
     </div>
 
     {{#if this.EXECUTIONPLAN.DATA.length}}
@@ -54,13 +54,13 @@ Preparation Time: {{preparationTime}}ms
 
             {{#if ../../../schemaDef/dbType/isSQLServer}}
                 <tr>
-                    <td><a href="index.cfm/Fiddles/getSQLPlan?db_type_id={{../../../../schemaDef/dbType/id}}&short_code={{../../../../schemaDef/short_code}}&query_id={{../../../../id}}&id={{index}}">Download .sqlplan</a></td>
+                    <td><a href="index.cfm/Fiddles/getSQLPlan?db_type_id={{../../../../schemaDef/dbType/id}}&short_code={{../../../../schemaDef/short_code}}&query_id={{../../../../id}}&id={{index}}">{{t "control.downloadSqlplan"}}</a></td>
                 </tr>
             {{/if}}
 
             {{#if ../../../schemaDef/dbType/isPostgreSQL}}
                 <tr>
-                    <td><form action="http://explain.depesz.com/" target="_new"><input type="hidden" name="title" value="{{../../schemaDef/dbType/id}}/{{../../schemaDef/short_code}}/{{../../id}}/{{index}}"><input type="hidden" name="plan" value=""><input type="submit" class="btn btn-info depesz" value="View on Depesz"></form></td>
+                    <td><form action="http://explain.depesz.com/" target="_new"><input type="hidden" name="title" value="{{../../schemaDef/dbType/id}}/{{../../schemaDef/short_code}}/{{../../id}}/{{index}}"><input type="hidden" name="plan" value=""><input type="submit" class="btn btn-info depesz" value="{{t 'control.viewOnDepesz'}}"></form></td>
                 </tr>
             {{/if}}
 

@@ -68,14 +68,14 @@ define([
 
                 this.DBType(db_type_id);
 
-                if (query.get("pendingChanges") && !confirm("Warning! You have made changes to your query which will be lost. Continue?'")) {
+                if (query.get("pendingChanges") && !confirm($.i18n.t("message.unsavedChanges"))) {
                     return false;
                 }
 
                 schemaDef.set("loading", true);
 
                 $(".helpTip").css("display", "none");
-                $("body").block({ message: "Loading..."});
+                $("body").block({ message: $.i18n.t("status.loading")});
 
                 return idm.serviceCall({
                     url: "endpoint/loadContent/" + frag.replace(/\//g, '_').replace(/^!/, '')

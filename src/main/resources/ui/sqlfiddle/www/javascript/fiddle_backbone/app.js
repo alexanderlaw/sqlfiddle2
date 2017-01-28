@@ -19,18 +19,33 @@ define([
     './router',
     'utils/renderTerminator',
     'utils/openidconnect',
-    'Backbone', 'underscore', 'jquery'
+    'Backbone', 'underscore', 'jquery', 'Handlebars',
+    'text!./templates/navbar.html', 'text!./templates/mainContainer.html',
+    'text!./templates/textToDdlModal.html', 'text!./templates/myFiddlesModal.html'
 ], function (
         browserEngines,
         OpenIDConnectProviers, UsedFiddle, MyFiddleHistory, DBTypesList, SchemaDef, Query,
         DBTypesListView, QueryEnvironmentsList, SchemaDefView, QueryView, LoginDialog, UserOptions, MyFiddleDialog,
         Router, renderTerminator, openidconnect,
-        Backbone, _, $
+        Backbone, _, $, Handlebars,
+        navbarTemplate, mainContainerTemplate, textToDdlTemplate, myFiddlesTemplate
     ) {
 
 var obj = {
 
     initialize : function() {
+
+        var navbarCompiledTemplate = Handlebars.compile(navbarTemplate);
+        $("#navbar").html(navbarCompiledTemplate({}));
+
+        var mainContainerCompiledTemplate = Handlebars.compile(mainContainerTemplate);
+        $("#mainContainer").html(mainContainerCompiledTemplate({}));
+
+        var textToDdlCompiledTemplate = Handlebars.compile(textToDdlTemplate);
+        $("#textToDDLModal").html(textToDdlCompiledTemplate({}));
+
+        var myFiddlesCompiledTemplate = Handlebars.compile(myFiddlesTemplate);
+        $("#myFiddlesModal").html(myFiddlesCompiledTemplate({}));
 
         var router = {};
 
@@ -158,7 +173,7 @@ var obj = {
             }
 
             $button.data("originalValue", $button.html());
-            $button.prop('disabled', true).text('Building Schema...');
+            $button.prop('disabled', true).text($.i18n.t("status.buildingSchema"));
 
             schemaDef.build();
         });
@@ -169,7 +184,7 @@ var obj = {
 
             if ($button.prop('disabled')) return false;
             $button.data("originalValue", $button.html());
-            $button.prop('disabled', true).text('Executing SQL...');
+            $button.prop('disabled', true).text($.i18n.t("status.executingSql"));
 
             queryView.checkForSelectedText();
             query.execute();
@@ -229,7 +244,7 @@ var obj = {
 
         $(window).bind('beforeunload', function () {
             if (query.get("pendingChanges"))
-                return "Warning! You have made changes to your query which will be lost. Continue?'";
+                return $.i18n.t("message.unsavedChanges");
         });
 
         /* Data loading */

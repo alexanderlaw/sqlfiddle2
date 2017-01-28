@@ -1,0 +1,140 @@
+        <div class="row-fluid">
+
+            <div class="span12" id="content">
+
+                <div id="environment-controls">
+                    <span class="dropdown" id="environment"></span>
+                </div>
+                <div class="span12" id="schema-output">
+                    <div class="span6 panel schema pull-left">
+
+                        <div class="helpTip alert alert-info alert-block">
+                            <h4 class="alert-heading">{{t "control.schemaPanel"}}</h4>
+                            {{t "description.schemaPanel"}}
+                        </div>
+
+                                <form id="fiddleFormDDL" method="post" action="">
+                                    <textarea id="schema_ddl"></textarea>
+
+                                    <div id="browser"></div>
+
+                                    <div class="action_buttons ddl_actions">
+
+                                        <a href="#" id="buildSchema" title="{{t 'hint.buildSchema'}}">
+                                        <label for="result-ddl" class="btn btn-primary">
+                                            {{t "control.buildSchema"}} <i class="icon-download-alt icon-white"></i>
+                                        </label>
+                                        </a>
+
+                                        <a href="#" id="schemaFullscreen" class="btn btn-info">
+                                            {{t "control.editFullscreen"}} <i class="icon-resize-full icon-white"></i>
+                                        </a>
+
+                                        <a href="#" id="schemaBrowser" class="btn btn-info">
+                                            {{t "control.schemaBrowser"}} <i class="icon-indent-left icon-white"></i>
+                                        </a>
+    <!--
+                                        <a href="#" id="schemaDiagram" class="btn btn-info">
+                                            {{t "control.schemaDiagram"}} <i class="icon-qrcode"></i>
+                                        </a>
+    -->
+                                        <div class="btn-group terminator" id="schemaStmtTerminator" data-statement_separator=";">
+                                            <a class="btn btn-info dropdown-toggle" data-toggle="dropdown" href="#">
+                                            [ ; ]
+                                            <span class="caret"></span>
+                                            </a>
+                                            <ul class="dropdown-menu nav">
+                                                <li class="nav-header">{{t "control.queryTerminator"}}</li>
+                                                <li class="divider"></li>
+                                                <li><a href=";">{{t "item.queryTerminator.semiColon"}} [ ; ]</a></li>
+                                                <li><a href="|">{{t "item.queryTerminator.pipe"}} [ | ]</a></li>
+                                                <li><a href="/">{{t "item.queryTerminator.slash"}} [ / ]</a></li>
+                                                <li><a href="//">{{t "item.queryTerminator.doubleSlash"}} [ // ]</a></li>
+                                                <li><a href="GO">{{t "item.queryTerminator.keyword"}} [ GO ]</a></li>
+                                            </ul>
+                                        </div>
+
+
+
+                                    </div>
+
+                                    <div class="action_buttons browser_actions">
+                                        <a href="#" id="ddlEdit" class="btn btn-info">
+                                            {{t "control.ddlEditor"}} <i class="icon-pencil icon-white"></i>
+                                        </a>
+                                    </div>
+
+
+
+                                </form>
+
+                    </div><!-- end ddl div -->
+
+
+                    <div class="span6 panel sql pull-right needsReadySchema">
+
+
+                        <div class="helpTip alert alert-info alert-block">
+                            <h4 class="alert-heading">{{t "control.queryPanel"}}</h4>
+                            {{t "description.queryPanel"}}
+                        </div>
+
+
+                        <form id="fiddleFormSQL" method="post" action="" class="schema_ready">
+                            <textarea id="sql"></textarea>
+
+                            <div class="action_buttons">
+
+                                <div class="btn-group" id="runQueryOptions">
+
+                                        <a href="#" class="runQuery btn btn-primary" title="{{t 'hint.runQuery'}}">{{t "control.runSql"}} <i class="icon-play icon-white"></i></a>
+
+                                    <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                                        <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <!-- dropdown menu links -->
+                                        <li><a href="#" id="tabular">{{t "item.output.tabular"}}</a></li>
+                                        <li><a href="#" id="plaintext">{{t "item.output.plaintext"}}</a></li>
+                                        <li><a href="#" id="markdown">{{t "item.output.markdown"}}</a></li>
+                                    </ul>
+
+                                </div>
+
+                                <a href="#" id="queryFullscreen" class="btn btn-info">
+                                    {{t "control.editFullscreen"}} <i class="icon-resize-full icon-white"></i>
+                                </a>
+
+                                <a href="#" id="queryPrettify" class="btn btn-info">
+                                    {{t "control.formatCode"}} <i class="icon-filter icon-white"></i>
+                                </a>
+
+                                <div class="btn-group terminator" id="queryStmtTerminator" data-statement_separator="//">
+                                    <a class="btn btn-info dropdown-toggle" data-toggle="dropdown" href="#">
+                                    [ // ]
+                                    <span class="caret"></span>
+                                    </a>
+                                    <ul class="dropdown-menu nav">
+                                        <li class="nav-header">{{t "control.batchSeparator"}}</li>
+                                        <li class="divider"></li>
+                                        <li><a href="//">{{t "item.batchSeparator.doubleSlash"}} [ // ]</a></li>
+                                        <li><a href=";">{{t "item.batchSeparator.semiColon"}} [ ; ]</a></li>
+                                        <li><a href="|">{{t "item.batchSeparator.pipe"}} [ | ]</a></li>
+                                        <li><a href="/">{{t "item.batchSeparator.slash"}} [ / ]</a></li>
+                                        <li><a href="GO">{{t "item.batchSeparator.keyword"}} [ GO ]</a></li>
+                                    </ul>
+                                </div>
+
+
+                            </div>
+
+                        </form>
+                    </div><!-- end sql div -->
+
+                </div><!-- end schema-output -->
+
+                <div class="span12 panel needsReadySchema" id="output">
+                </div> <!-- end output -->
+
+            </div><!-- end content -->
+        </div><!-- end row-fluid -->

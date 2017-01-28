@@ -17,9 +17,9 @@ define(["Backbone"], function (Backbone) {
         getEnvironments : function () {
             if (!this.get("available_environments")) return null;
             var environments = new Backbone.Collection();
-            environments.add({id: "", title: "<Default>"});
+            environments.add({id: "", title: $.i18n.t("item.environment.default")});
             $.each(this.get("available_environments").split(","), function(index, env) {
-                environments.add({id: env, title: (env == "*" ? "Dedicated DB Cluster" : env)});
+                environments.add({id: env, title: (env == "*" ? $.i18n.t("item.environment.dedicatedDbCluster") : env)});
             });
             return environments;
         }

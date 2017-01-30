@@ -1,0 +1,113 @@
+{
+    "control" : {
+        "about" : "Справка",
+        "addToFavorites" : "Добавить в Избранное",
+        "appendToDdl" : "Добавить к DDL",
+        "batchSeparator" : "Разделитель серий",
+        "buildSchema" : "Построить схему",
+        "chooseAuthProvider" : "Выберите провайдер аутентификации OpenID",
+        "clear" : "Очистить",
+        "dateProblems" : "Проблемы с датами?",
+        "ddlEditor" : "Редактор DDL",
+        "downloadSentryPlanExplorer" : "Загрузить SQL Sentry Plan Explorer (бесплатно)",
+        "downloadSqlplan" : "Загрузить .sqlplan",
+        "editFullscreen" : "Полноэкранный режим",
+        "exitFullscreen" : "Панельный режим",
+        "favorites" : "Избранное",
+        "fiddleHistorySession" : "История этюдов (в этом сеансе)",
+        "forgetOtherQueries" : "Стереть другие",
+        "forgetSchema" : "Стереть схему",
+        "forgetThisQuery" : "Стереть этот запрос",
+        "formatCode" : "Преобразить код",
+        "link" : "ссылка",
+        "linkNumResultSets" : { "count" : "наборы результатов (__count__)", "count_plural" : "наборы результатов (__count__)" },
+        "linkNumTables" : { "count" : "таблицы (__count__)", "count_plural" : "таблицы (__count__)" },
+        "login" : "Вход",
+        "myFiddles" : "Мои этюды",
+        "previewDdlLink" : "предпросмотр DDL",
+        "previewSqlLink" : "предпросмотр SQL",
+        "queryPanel" : "Панель запросов",
+        "queryTerminator" : "Разделитель запросов",
+        "removeFromFavorites" : "Убрать из Избранного",
+        "runSql" : "Выполнить SQL",
+        "schemaBrowser" : "Обзор схемы",
+        "schemaDiagram" : "Диаграмма",
+        "schemaPanel" : "Панель схемы",
+        "showAllQueries" : { "count" : "Показать все запросы (__count__)", "count_plural" : "Показать все запросы (__count__)"},
+        "testParseDdl" : "Проверка",
+        "textToDdl" : "Текст в DDL",
+        "textToDdlExample" : "Пример ввода",
+        "userOptions" : "Действия пользователя",
+        "viewExecutionPlan" : "Просмотреть план выполнения",
+        "viewOnDepesz" : "Просмотреть на Depesz",
+        "viewSampleFiddle" : "Пробный этюд"
+    },
+    "caption" : {
+        "cols_num" : "Столбцов",
+        "databaseType" : "Тип базы данных",
+        "environment" : "Окружение",
+        "executionTime" : "Время выполнения",
+        "identifier" : "Идентификатор",
+        "loginToFiddle" : "Вход в SQL Fiddle",
+        "myLastAccess" : "Моя последняя активность",
+        "preparationTime" : "Время подготовки",
+        "productName" : "SQL Fiddle",
+        "recordCount" : "Число записей",
+        "rows_num" : "Строк",
+        "schemaBrowser" : "Обзор схемы",
+        "tableName" : "Имя таблицы",
+        "textToDDL" : "Перевод таблицы текстового формата в DDL",
+        "timeMS" : "мс"
+    },
+    "item" : {
+        "batchSeparator" : {
+            "semiColon" : "Точка с запятой",
+            "pipe" : "Вертикальная черта",
+            "slash" : "Косая черта",
+            "doubleSlash" : "Двойная косая",
+            "keyword" : "Ключевое слово"
+        },
+        "queryTerminator" : {
+            "semiColon" : "Точка с запятой",
+            "pipe" : "Вертикальная черта",
+            "slash" : "Косая черта",
+            "doubleSlash" : "Двойная косая",
+            "keyword" : "Ключевое слово"
+        },
+        "output" : {
+            "tabular" : "Табличный вывод",
+            "plaintext" : "Текстовый вывод",
+            "markdown" : "Вывод в markdown"
+        },
+        "environment" : {
+            "default" : "<По умолчанию>",
+            "dedicatedDbCluster" : "Выделенный кластер БД"
+        }
+    },
+    "status" : {
+        "loading" : "Загружается...",
+        "buildingSchema" : "Построение схемы...",
+        "executingSql" : "Выполнение запроса...",
+        "schemaReady" : "Схема готова"
+    },
+    "message" : {
+        "unsavedChanges" : "Предупреждение! Вы внесли в запрос изменения, которые сейчас будут потеряны. Продолжить?",
+        "myFiddlesForAnonymous" : "<strong>Замечание для анонимных пользователей:</strong> Эти ссылки на этюды будут отмеченными здесь, пока вы не закроете браузер. Если вы хотите, чтобы они сохранились дольше, вам нужно войти и добавить их в «Избранное» (поставив звёздочки).",
+        "noFiddles" : "Этюды не найдены!",
+        "xhrError" : "Проблема! Что-то пошло не так. Попытайтесь повторить своё действие и, если проблема не уйдёт, напишите о ней по адресу admin@sqlfiddle.com."
+    },
+    "hint" : {
+        "buildSchema" : "Вы также можете нажать Ctrl-Enter в ходе редактирования",
+        "forgetSchema" : "Это приведёт к удалению этой схемы и всех связанных запросов из вашего списка.",
+        "forgetThisQuery" : "Это приведёт к удалению этого запроса из вашего списка.",
+        "forgetOtherQueries" : "Это приведёт к удалению всех других запросов с этой схемой из вашего списка.",
+        "runQuery" : "Вы также можете нажать Ctrl-Enter в ходе редактирования",
+        "trySampleFiddle" : "Почему бы не попробовать пример этюда, чтобы посмотреть, как это работает?"
+    },
+    "description" : {
+        "schemaPanel" : "Воспользовавшись этой панелью, вы можете получить в базе данных исходные данные задачи (используйте команды CREATE TABLE, INSERT и т. п., чтобы получить показательную выборку из вашей реальной базы). Cредство \"Текст в DDL\" позволяет быстро получить объекты схемы из текстового содержимого.",
+        "queryPanel" : "В этой панели вы можете записать решение вашей задачи, применяя SQL-операторы SELECT и т. п. Результаты запросов будут выводиться ниже. Делитесь своими этюдами, копируя ссылки, формируемые при каждом выполнении запросов.",
+        "textToDdlArea" : "Вставьте сюда форматированный текст (это может быть текст, разделённый запятыми, пробелами или вертикальными чертами.",
+        "markdownOutput" : "Формат markdown полезен, когда вам нужно поделиться своим этюдом на сайтах <a href='http://stackoverflow.com' target='_new'>StackOverflow</a>, <a href='http://dba.stackexchange.com' target='_new'>dba.se</a> и подобных. Да, на этих сайтах можно рассчитывать на помощь по вопросам, связанным с базами данных!"
+    }
+}

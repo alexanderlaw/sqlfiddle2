@@ -30,18 +30,18 @@ pg_dropcluster --stop $pgver main
 echo "listen_addresses = '*'" >> /etc/postgresql-common/createcluster.conf
 echo "max_connections = 500" >> /etc/postgresql-common/createcluster.conf
 
-pg_createcluster --start $pgver main -- --auth-local=trust
+pg_createcluster --start $pgver main
 echo "host    all             all             10.0.0.14/32            md5" >> /etc/postgresql/$pgver/main/pg_hba.conf
 echo "host    all             all             10.0.0.14/32            @authmethodhost@" >> /usr/share/postgresql/$pgver/pg_hba.conf.sample
 echo "host    all             all             10.0.0.24/32            md5" >> /etc/postgresql/$pgver/main/pg_hba.conf
 service postgresql reload
 
-echo "alter user postgres with password 'password';" | psql -U postgres
+su postgres -c "psql -c \"alter user postgres with password 'password';\""
 iptables -A INPUT -p tcp --dport 5432 -j ACCEPT
 
 # initialize the template database, used by fiddle databases running in this env
-psql -U postgres postgres < /vagrant/src/main/resources/db/postgresql/initial_setup.sql
-psql -U postgres db_template < /vagrant/src/main/resources/db/postgresql/db_template.sql
+su postgres -c "psql postgres < /vagrant/src/main/resources/db/postgresql/initial_setup.sql"
+su postgres -c "psql db_template < /vagrant/src/main/resources/db/postgresql/db_template.sql"
 
 # Install pgmanager service
 cp /vagrant/src/main/resources/db/postgresql/pgmanager/com.postgrespro.PGManager.conf /etc/dbus-1/system.d/

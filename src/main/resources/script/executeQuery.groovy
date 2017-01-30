@@ -14,9 +14,13 @@ import java.io.ByteArrayOutputStream
 import java.nio.charset.Charset
 import com.postgrespro.sqlfiddle.PgExecutor
 import java.sql.SQLException
+import java.util.Locale
+import java.util.ResourceBundle
 
 @InheritConstructors
 class PostgreSQLException extends Exception {}
+
+def i18nbundle = ResourceBundle.getBundle("i18n", Locale.getDefault(), Thread.currentThread().contextClassLoader)
 
 def content = request.getContent().asMap()
 
@@ -187,7 +191,7 @@ if (db_type.context == "host") {
                 STATEMENT: "",
                 RESULTS: [DATA: [], COLUMNS: []],
                 SUCCEEDED: false,
-                ERRORMESSAGE: "No host of this type available to create schema. Try using a different database version."
+                ERRORMESSAGE: i18nbundle.getString("error.noHostAvailable")
             ]
         ]
         return response
@@ -213,7 +217,7 @@ if (db_type.context == "host") {
                         STATEMENT: "",
                         RESULTS: [DATA: [], COLUMNS: []],
                         SUCCEEDED: false,
-                        ERRORMESSAGE: 'Failed to change default password for postgres admin: ' + e.getMessage()
+                        ERRORMESSAGE: String.format(i18nbundle.getString("error.failedToChangeDefaultPassword"), e.getMessage())
                     ]
                 ]
                 return response
@@ -237,19 +241,19 @@ if (db_type.context == "host") {
 
             def queryResult = executor.execute(content.sql, content.statement_separator)
 
-            println "messages:" + messages
+            println "messages: " + messages
 
             // TODO: Rid of double conversion
             def jsonObj = new JsonSlurper().parseText(queryResult.toString())
             response.sets = jsonObj
         } catch (Exception e) {
-            println "exception:" + e.getMessage()
+            println "exception: " + e.getMessage() + "\n" + messages
             response.sets = [
                 [
                     STATEMENT: "",
                     RESULTS: [DATA: [], COLUMNS: []],
                     SUCCEEDED: false,
-                    ERRORMESSAGE: 'Query execution failed: ' + e.getMessage() + "\n" + messages.toString()
+                    ERRORMESSAGE: String.format(i18nbundle.getString("error.queryExecutionFailed"), e.getMessage())
                 ]
             ]
         } finally {

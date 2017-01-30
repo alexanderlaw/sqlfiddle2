@@ -2,8 +2,10 @@ package com.postgrespro.sqlfiddle;
 
 import java.io.*;
 import java.sql.*;
+import java.util.Locale;
 import java.util.Map;
 import java.util.regex.*;
+import java.util.ResourceBundle;
 import java.security.SecureRandom;
 import java.time.format.DateTimeFormatter;
 import java.text.SimpleDateFormat;
@@ -29,9 +31,11 @@ public class PgExecutor implements AutoCloseable {
     private String dedicatedDbUser = "postgres";
     private JSONObject dedicatedClusterProperties = null;
     private Pattern connectPattern = Pattern.compile("(?m)\\A\\s*\\\\connect\\s+(.*)$");
+    ResourceBundle i18nbundle = null;
 
     public PgExecutor(StringBuilder log) {
         this.log = log;
+        this.i18nbundle = ResourceBundle.getBundle("i18n", Locale.getDefault());
     }
 
     private String generateUsername(String userName) {
@@ -153,9 +157,7 @@ public class PgExecutor implements AutoCloseable {
                 rsCount++;
                 if (rsCount > MaxResultSetCount) {
                     throw new Exception(
-                        String.format(
-                            "Too many resultsets (>%d) returned. Please modify your query text." , MaxResultSetCount
-                        ));
+                        String.format(i18nbundle.getString("error.tooManyResultsets"), MaxResultSetCount));
                 }
                 ResultSet rs = stmt.getResultSet();
                 ResultSetMetaData rsmd = rs.getMetaData();
@@ -169,9 +171,7 @@ public class PgExecutor implements AutoCloseable {
                     rowCount++;
                     if (rowCount > MaxRowCount) {
                         throw new Exception(
-                          String.format(
-                           "Too many rows (>%d) returned. Please modify your query to limit the rows number.", MaxRowCount
-                        ));
+                          String.format(i18nbundle.getString("error.tooManyRows"), MaxRowCount));
                     }
                 }
                 jsonrs.put("DATA", rows);
@@ -239,7 +239,7 @@ public class PgExecutor implements AutoCloseable {
         StringBuilder sb = new StringBuilder();
         try {
             Boolean resultSetPresent = stmt.execute("SELECT * FROM command_output");
-            if (!resultSetPresent) throw new Exception("Could not get output of the OS command.");
+            if (!resultSetPresent) throw new Exception(i18nbundle.getString("error.couldntGetCommandOutput"));
             ResultSet rs = stmt.getResultSet();
             while (rs.next()) {
                 sb.append(rs.getString(1));
@@ -301,7 +301,7 @@ public class PgExecutor implements AutoCloseable {
             } else {
                 String messages = preparationResult.getString("error");
                 dedicatedClusterProperties = null;
-                throw new Exception("Failed to create the dedicated cluster: (" + messages + ")");
+                throw new Exception(String.format(i18nbundle.getString("error.failedToCreateCluster"), messages));
             }
         } else {
             envType = EnvironmentType.SeparateDb;

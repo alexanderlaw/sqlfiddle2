@@ -38,6 +38,7 @@
         "createScriptFileName" : "CreateScript.groovy",
         "testScriptFileName" : "TestScript.groovy",
         "searchScriptFileName" : "SearchScript.groovy",
+        "updateScriptFileName" : "UpdateScript.groovy",
         "deleteScriptFileName" : "DeleteScript.groovy",
         "classpath" : [
             "&{launcher.project.location}/tools/hosts"
@@ -198,13 +199,23 @@
                         "NOT_UPDATEABLE"
                     ]
                 },
+                "default_database" : {
+                    "type" : "string",
+                    "required" : true,
+                    "nativeName" : "default_database",
+                    "nativeType" : "string",
+                    "flags" : [
+                        "NOT_CREATABLE",
+                        "NOT_UPDATEABLE"
+                    ]
+                },
                 "admin_username" : {
                     "type" : "string",
                     "required" : true,
                     "nativeName" : "admin_username",
                     "nativeType" : "string",
                     "flags" : [
-                        "NOT_UPDATEABLE"
+                        "UPDATEABLE"
                     ]
                 },
                 "admin_password" : {
@@ -213,7 +224,7 @@
                     "nativeName" : "admin_password",
                     "nativeType" : "string",
                     "flags" : [
-                        "NOT_UPDATEABLE"
+                        "UPDATEABLE"
                     ]
                 },
                 "simple_name" : {

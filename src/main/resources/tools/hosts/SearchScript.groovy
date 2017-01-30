@@ -131,6 +131,7 @@ import org.forgerock.openicf.misc.scriptedcommon.MapFilterVisitor
             def jdbc_class_name = it.jdbc_class_name
             def simple_name = it.simple_name
             def full_name = it.full_name
+            def default_database = it.default_database
             def admin_username = it.admin_username
             def admin_password = it.admin_password
             handler {
@@ -141,6 +142,7 @@ import org.forgerock.openicf.misc.scriptedcommon.MapFilterVisitor
                 attribute 'simple_name', simple_name
                 attribute 'full_name', full_name
                 attribute 'jdbc_url', populatedUrl
+                attribute 'default_database', default_database
                 attribute 'admin_username', admin_username
                 attribute 'admin_password', admin_password
                 attribute 'jdbc_url_template', url_template

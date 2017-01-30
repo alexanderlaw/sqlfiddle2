@@ -5,6 +5,7 @@ import groovy.transform.InheritConstructors
 import groovy.sql.Sql
 import groovy.sql.DataSet
 import java.security.MessageDigest
+import java.security.SecureRandom
 import java.util.regex.Pattern
 import javax.xml.transform.TransformerFactory
 import javax.xml.transform.stream.StreamResult
@@ -126,6 +127,16 @@ def execQueryStatement(connection, statement, rethrow) {
     return set
 }
 
+def generatePassword() {
+    def chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    int len = 10;
+    def rnd = new SecureRandom();
+    def sb = new StringBuilder(len);
+    for (int i = 0; i < len; i++)
+        sb.append(chars.charAt(rnd.nextInt(chars.length())));
+    return sb.toString();
+}
+
 def db_type = openidm.read("system/fiddles/db_types/" + content.db_type_id)
 if (db_type.simple_name != "PostgreSQL")
     assert content.schema_short_code;
@@ -184,6 +195,33 @@ if (db_type.context == "host") {
 
     if (db_type.simple_name == "PostgreSQL") {
         def adminDatabase = openidm.read("system/hosts/admin_databases/" + content.db_type_id)
+        if (adminDatabase.admin_password == 'password') {
+            // Change default password
+            def adminConnection = null
+            try {
+                def adminConnUrl = adminDatabase.jdbc_url_template.replaceAll("#databaseName#", adminDatabase.default_database)
+                adminConnection = Sql.newInstance(adminConnUrl, adminDatabase.admin_username, adminDatabase.admin_password, adminDatabase.jdbc_class_name)
+                adminDatabase.admin_password = generatePassword()
+                adminConnection.execute(String.format("ALTER ROLE %s WITH PASSWORD '%s'", adminDatabase.admin_username, adminDatabase.admin_password))
+                openidm.update("system/hosts/admin_databases/" + content.db_type_id, null,
+                    ["admin_username" : adminDatabase.admin_username,
+                     "admin_password" : adminDatabase.admin_password])
+            } catch (Exception e) {
+                println "exception: " + e.getMessage()
+                response.sets = [
+                    [
+                        STATEMENT: "",
+                        RESULTS: [DATA: [], COLUMNS: []],
+                        SUCCEEDED: false,
+                        ERRORMESSAGE: 'Failed to change default password for postgres admin: ' + e.getMessage()
+                    ]
+                ]
+                return response
+            } finally {
+                if (adminConnection != null)
+                    adminConnection.close()
+            }
+        }
 
         def messages = StringBuilder.newInstance()
         def executor = new PgExecutor(messages)

@@ -88,7 +88,7 @@
         "loading" : "Loading...",
         "buildingSchema" : "Building Schema...",
         "executingSql" : "Executing SQL...",
-        "schemaReady" : "Schema Ready",
+        "schemaReady" : "Schema Ready"
     },
     "message" : {
         "unsavedChanges" : "Warning! You have made changes to your query which will be lost. Continue?",

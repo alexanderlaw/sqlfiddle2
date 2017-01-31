@@ -103,8 +103,10 @@ public class PgExecutor implements AutoCloseable {
             switch (meta.getColumnType(i)) {
                 case java.sql.Types.TIMESTAMP:
                     result.put(rs.getTimestamp(i) != null ? new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").format(rs.getTimestamp(i)) : null);
+                    break;
                 case java.sql.Types.TIME:
                     result.put(rs.getTime(i) != null ? new SimpleDateFormat("HH:mm:ss").format(rs.getTime(i)) : null);
+                    break;
                 case java.sql.Types.DATE:
                     result.put(rs.getDate(i) != null ? new SimpleDateFormat("yyyy-MM-dd").format(rs.getDate(i)) : null);
                     break;

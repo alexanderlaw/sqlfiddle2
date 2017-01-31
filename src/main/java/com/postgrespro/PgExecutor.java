@@ -30,7 +30,7 @@ public class PgExecutor implements AutoCloseable {
     private EnvironmentType envType;
     private String dedicatedDbUser = "postgres";
     private JSONObject dedicatedClusterProperties = null;
-    private Pattern connectPattern = Pattern.compile("(?m)\\A\\s*\\\\connect\\s+(.*)$");
+    private Pattern connectPattern = Pattern.compile("(?mi)\\A\\s*\\\\connect\\s+(.*)$");
     ResourceBundle i18nbundle = null;
 
     public PgExecutor(StringBuilder log) {

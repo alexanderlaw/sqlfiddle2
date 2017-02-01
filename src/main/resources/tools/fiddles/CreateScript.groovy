@@ -115,17 +115,16 @@ switch ( objectClass.objectClassValue ) {
                 s.db_type_id,
                 s.short_code
             FROM
-                schema_defs s
-                    LEFT OUTER JOIN queries q ON
-                       s.id = q.schema_def_id AND
-                       q.md5 = ?
+                queries q
+                LEFT OUTER JOIN schema_defs s ON
+                    s.id = q.schema_def_id AND s.short_code = ?
             WHERE
-                s.id = ?
+                q.md5 = ?
             ORDER BY
                 q.id
-            """, [md5hash, schema_def_id])
+            """, [schema_def_id, md5hash])
 
-        if (!existing_query || !existing_query.queryId) {
+        if (!existing_query || (schema_def_id != null && existing_query.short_code != schema_def_id)) {
             def new_query
             sql.withTransaction {
 
@@ -172,7 +171,7 @@ switch ( objectClass.objectClassValue ) {
             }
             returnVal = new Uid((db_type_id + "_" + (existing_query ? existing_query.short_code : 0) + "_" + new_query.queryId) as String)
         } else {
-            returnVal = new Uid((existing_query.db_type_id + "_" + existing_query.short_code + "_" + existing_query.queryId) as String)
+            returnVal = new Uid((db_type_id + "_" + (existing_query.short_code ?: 0) + "_" + existing_query.queryId) as String)
         }
 
     break

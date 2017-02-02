@@ -2,7 +2,8 @@
 
 set -e
 
-pgver=$1
+pgver_full=$1
+pgver=${pgver_full%%-*}
 locale=$2
 if [ ! -z $locale ]; then
     locale-gen $locale
@@ -17,8 +18,8 @@ mkswap /swapfile1
 swapon /swapfile1
 echo "/swapfile1 none swap sw 0 0" >> /etc/fstab
 
-echo "deb http://repo.postgrespro.ru/pgpro-9.6/ubuntu $(lsb_release -cs) main" > /etc/apt/sources.list.d/postgrespro.list
-wget --quiet -O - http://repo.postgrespro.ru/pgpro-9.6/keys/GPG-KEY-POSTGRESPRO | apt-key add -
+echo "deb http://repo.postgrespro.ru/pgpro-$pgver_full/ubuntu $(lsb_release -cs) main" > /etc/apt/sources.list.d/postgrespro.list
+wget --quiet -O - http://repo.postgrespro.ru/pgpro-$pgver/keys/GPG-KEY-POSTGRESPRO | apt-key add -
 apt-get --yes update
 apt-get --yes upgrade
 

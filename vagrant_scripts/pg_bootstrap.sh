@@ -58,3 +58,6 @@ iptables -t filter -A OUTPUT -m state --state NEW -j LOG --log-level warning \
   --log-prefix "Outbound connection blocked: " --log-uid
 iptables -t filter -A OUTPUT -m state --state NEW -j DROP
 netfilter-persistent save
+
+# Reset ubuntu password
+passwd -d ubuntu

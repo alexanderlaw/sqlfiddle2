@@ -226,7 +226,7 @@ if (db_type.context == "host") {
                     adminConnection.close()
             }
         }
-        println "executing query:\n\tenvironment: ${content.environment}\n\tpreparation: ${content.preparation}\n\tquery: ${content.sql}\n"
+        println((new Date()).toTimestamp().toString() + " executing query:\n\tenvironment: ${content.environment}\n\tpreparation: ${content.preparation}\n\tquery: ${content.sql}\n")
 
         def messages = StringBuilder.newInstance()
         def executor = new PgExecutor(messages)

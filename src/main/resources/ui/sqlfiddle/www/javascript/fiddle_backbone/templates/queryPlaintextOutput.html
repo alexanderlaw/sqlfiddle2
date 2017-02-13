@@ -27,6 +27,14 @@
         </div>
         {{/each_with_index2}}
     {{/if}}
+    {{#if this.WARNINGS}}
+        {{t "caption.warnings"}}:
+        <div id="warnings_{{index}}" class="alert alert-success database-messages">
+        {{#each_with_index2 this.WARNINGS}}
+            <div>{{this}}</div>
+        {{/each_with_index2}}
+        </div>
+    {{/if}}
     {{#if this.SUCCEEDED}}
     <div id="messages_{{index}}" class="alert alert-success database-messages">
         <i class="icon-ok"></i>

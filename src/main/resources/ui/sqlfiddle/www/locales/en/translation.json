@@ -57,7 +57,8 @@
         "schemaBrowser" : "Schema Browser",
         "tableName" : "Table Name",
         "textToDDL" : "Formatted Text Table to DDL",
-        "timeMS" : "ms"
+        "timeMS" : "ms",
+        "warnings": "Warnings"
     },
     "item" : {
         "batchSeparator" : {

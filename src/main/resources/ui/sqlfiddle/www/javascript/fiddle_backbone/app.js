@@ -354,7 +354,8 @@ var obj = {
                                         "columns": rset.COLUMNS.join(", ")
                                         };
                                     }),
-                                    "error_message": set.ERRORMESSAGE
+                                    "error_message": set.ERRORMESSAGE,
+                                    "warnings": set.WARNINGS ? set.WARNINGS.join("\n") : null
                                 };
                             })
                 }));

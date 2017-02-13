@@ -57,7 +57,8 @@
         "schemaBrowser" : "Обзор схемы",
         "tableName" : "Имя таблицы",
         "textToDDL" : "Перевод таблицы текстового формата в DDL",
-        "timeMS" : "мс"
+        "timeMS" : "мс",
+        "warnings": "Предупреждения"
     },
     "item" : {
         "batchSeparator" : {

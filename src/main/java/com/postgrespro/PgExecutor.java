@@ -17,6 +17,7 @@ public class PgExecutor implements AutoCloseable {
 
     public int MaxColumnSize = 1000;
     public int MaxRowCount = 1000;
+    public int MaxWarningsSize = 10000;
     public int MaxResultSetCount = 10;
     public int MaxQueryDuration = 60; // seconds
 
@@ -188,6 +189,19 @@ public class PgExecutor implements AutoCloseable {
             }
             if (resultsets.length() > 0) {
                 result.put("RESULTSETS", resultsets);
+            }
+            SQLWarning sw = stmt.getWarnings();
+            if (sw != null) {
+                JSONArray warnings = new JSONArray();
+                do {
+                    warnings.put(sw.getMessage());
+                    if (warnings.toString().length() > MaxWarningsSize) {
+                        throw new Exception(
+                            String.format(i18nbundle.getString("error.tooLargeWarnings"), MaxWarningsSize));
+                    }
+                    sw = sw.getNextWarning();
+                } while (sw != null);
+                result.put("WARNINGS", warnings);
             }
         } catch (SQLException e) {
             result.put("SUCCEEDED", false);

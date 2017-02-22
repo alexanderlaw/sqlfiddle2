@@ -5,3 +5,4 @@ node_modules
 target
 backups
 ojdbc6.jar
+vagrant_scripts/private/

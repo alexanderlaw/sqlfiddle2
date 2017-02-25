@@ -112,10 +112,10 @@ public class PgExecutor implements AutoCloseable {
                     result.put(rs.getDate(i) != null ? new SimpleDateFormat("yyyy-MM-dd").format(rs.getDate(i)) : null);
                     break;
                 case java.sql.Types.CLOB:
-                    result.put(this.validateString(rs.getClob(i) != null ? this.clobToString(rs.getClob(i)) : null));
+                    result.put(validateString(rs.getClob(i) != null ? clobToString(rs.getClob(i)) : null));
                     break;
                 case java.sql.Types.ARRAY:
-                    result.put(this.validateArray(rs.getArray(i) != null ? rs.getArray(i).getArray() : null));
+                    result.put(validateArray(rs.getArray(i) != null ? rs.getArray(i).getArray() : null));
                     break;
                 case java.sql.Types.OTHER:
                     // for some reason, getObject is indexed starting at 1 instead of 0
@@ -129,12 +129,12 @@ public class PgExecutor implements AutoCloseable {
                             str = obj.toString();
                         } catch (Exception e) {
                         }
-                        result.put(this.validateString(str));
+                        result.put(validateString(str));
                     }
                     break;
 
                 default:
-                    result.put(this.validateString(rs.getString(i)));
+                    result.put(validateString(rs.getString(i)));
             }
         }
         return result;
@@ -221,26 +221,26 @@ public class PgExecutor implements AutoCloseable {
     }
 
     private Boolean prepareDbUser(Connection adminConn, String template_db, String username, String password) throws SQLException {
-        this.execQuery(adminConn, String.format("CREATE ROLE \"%s\" WITH LOGIN PASSWORD '%s'", username, password));
-        this.execQuery(adminConn, String.format("CREATE DATABASE \"%s\" WITH %s OWNER \"%s\"", username,
-             (this.validTemplateIdentifier(template_db) ? "TEMPLATE \"" + template_db + "\"" : ""), username));
+        execQuery(adminConn, String.format("CREATE ROLE \"%s\" WITH LOGIN PASSWORD '%s'", username, password));
+        execQuery(adminConn, String.format("CREATE DATABASE \"%s\" WITH %s OWNER \"%s\"", username,
+             (validTemplateIdentifier(template_db) ? "TEMPLATE \"" + template_db + "\"" : ""), username));
         return true;
     }
 
     private Boolean reassignObjects(Connection adminConn, String username) throws SQLException {
-        this.execQuery(adminConn, String.format("REASSIGN OWNED BY admin TO \"%s\"", username));
+        execQuery(adminConn, String.format("REASSIGN OWNED BY admin TO \"%s\"", username));
         return true;
     }
 
     private Boolean destroyDbUser(Connection adminConn, String username) throws SQLException {
-        this.execQuery(adminConn, String.format("DROP DATABASE IF EXISTS \"%s\"", username));
-        this.execQuery(adminConn, String.format("DROP ROLE IF EXISTS \"%s\"", username));
+        execQuery(adminConn, String.format("DROP DATABASE IF EXISTS \"%s\"", username));
+        execQuery(adminConn, String.format("DROP ROLE IF EXISTS \"%s\"", username));
         return true;
     }
 
     private Boolean prepareEnvironment(Connection conn, String preparationScript) throws SQLException {
         if (preparationScript != null && preparationScript.trim().length() > 0) {
-            this.execQuery(conn, preparationScript);
+            execQuery(conn, preparationScript);
         }
         return true;
     }
@@ -267,7 +267,7 @@ public class PgExecutor implements AutoCloseable {
         try {
             result = new JSONObject(sb.toString());
         } catch (Exception ex) {
-            log.append("Invalid output: " + sb.toString());
+            log.append("Invalid output: " + sb.toString() + "\n");
             throw ex;
         }
         return result;
@@ -298,7 +298,7 @@ public class PgExecutor implements AutoCloseable {
                         String preparationScript,
                         String environment) throws Exception {
 
-        this.username = this.generateUsername(userName);
+        this.username = generateUsername(userName);
         String dbusername = null;
 
         Class.forName(driverClass);
@@ -306,7 +306,7 @@ public class PgExecutor implements AutoCloseable {
 
         if (environment.equals("*")) {
             envType = EnvironmentType.DedicatedCluster;
-            JSONObject preparationResult = this.prepareDedicatedCluster(adminConnection, this.username);
+            JSONObject preparationResult = prepareDedicatedCluster(adminConnection, this.username);
             if (preparationResult.has("result")) {
                 dedicatedClusterProperties = (JSONObject)preparationResult.get("result");
 
@@ -321,18 +321,18 @@ public class PgExecutor implements AutoCloseable {
             }
         } else {
             envType = EnvironmentType.SeparateDb;
-            userPassword = this.generatePassword();
-            this.prepareDbUser(adminConnection, environment, this.username, userPassword);
+            userPassword = generatePassword();
+            prepareDbUser(adminConnection, environment, this.username, userPassword);
             dbusername = this.username;
-            if (this.validTemplateIdentifier(environment)) {
+            if (validTemplateIdentifier(environment)) {
                 adminNewDbConnection = DriverManager.getConnection(connectionUrlTemplate.replaceAll("#databaseName#", dbusername), adminName, adminPassword);
-                this.reassignObjects(adminNewDbConnection, dbusername);
+                reassignObjects(adminNewDbConnection, dbusername);
                 adminNewDbConnection.close();
             }
             connectionStringTemplate = connectionUrlTemplate;
         }
         userConnection = DriverManager.getConnection(connectionStringTemplate.replaceAll("#databaseName#", dbusername), dbusername, userPassword);
-        this.prepareEnvironment(userConnection, preparationScript);
+        prepareEnvironment(userConnection, preparationScript);
 
         return true;
     }
@@ -342,7 +342,7 @@ public class PgExecutor implements AutoCloseable {
         JSONArray results = new JSONArray();
 
         for (String query : fullQuery.split("[\r\n]" + (querySeparator != null ? querySeparator : "\\") + "[\r\n]")) {
-            this.log.append("query: " + query + "\n");
+            log.append("query: " + query + "\n");
             if (query.trim().length() > 0) {
                 if (envType == EnvironmentType.DedicatedCluster) {
                     Matcher matcher = connectPattern.matcher(query);
@@ -355,9 +355,9 @@ public class PgExecutor implements AutoCloseable {
                             continue;
                     }
                 }
-                JSONObject result = this.getQueryResult(userConnection, query);
+                JSONObject result = getQueryResult(userConnection, query);
                 results.put(result);
-                this.log.append("result: " + result.toString());
+                log.append("result: " + result.toString() + "\n");
             }
         }
         return results;
@@ -365,45 +365,45 @@ public class PgExecutor implements AutoCloseable {
 
 
     public void close() {
-        if (this.userConnection != null) {
+        if (userConnection != null) {
             try {
-                this.userConnection.close();
+                userConnection.close();
             } catch (Exception ex) {
-                this.log.append("Failed to close user connection: " + ex.getMessage() + "\n");
+                log.append("Failed to close user connection: " + ex.getMessage() + "\n");
             }
-            this.userConnection = null;
+            userConnection = null;
         }
-        if (this.adminNewDbConnection != null) {
+        if (adminNewDbConnection != null) {
             try {
-                this.adminNewDbConnection.close();
+                adminNewDbConnection.close();
             } catch (Exception ex) {
-                this.log.append("Failed to close admin connection (2): " + ex.getMessage() + "\n");
+                log.append("Failed to close admin connection (2): " + ex.getMessage() + "\n");
             }
-            this.adminNewDbConnection = null;
+            adminNewDbConnection = null;
         }
 
-        if (this.adminConnection != null) {
+        if (adminConnection != null) {
             if (envType == EnvironmentType.DedicatedCluster) {
                 try {
                     if (dedicatedClusterProperties != null)
-                        this.dropDedicatedCluster(this.adminConnection, dedicatedClusterProperties);
+                        dropDedicatedCluster(adminConnection, dedicatedClusterProperties);
                 } catch (Exception ex) {
-                    this.log.append("Failed to drop dedicated cluster: " + ex.getMessage() + "\n");
+                    log.append("Failed to drop dedicated cluster: " + ex.getMessage() + "\n");
                 }
             } else {
                 try {
-                    this.destroyDbUser(this.adminConnection, this.username);
+                    destroyDbUser(adminConnection, username);
                 } catch (Exception ex) {
-                    this.log.append("Failed to destroy user environment: " + ex.getMessage() + "\n");
+                    log.append("Failed to destroy user environment: " + ex.getMessage() + "\n");
                 }
             }
 
             try {
-                this.adminConnection.close();
+                adminConnection.close();
             } catch (Exception ex) {
-                this.log.append("Failed to close admin connection: " + ex.getMessage() + "\n");
+                log.append("Failed to close admin connection: " + ex.getMessage() + "\n");
             }
-            this.adminConnection = null;
+            adminConnection = null;
         }
     }
 }

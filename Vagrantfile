@@ -169,6 +169,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     idm.vm.provider "virtualbox" do |v, override|
       v.customize ["modifyvm", :id, "--nictype1", "virtio", "--nictype2", "virtio", "--chipset", "ich9", "--uartmode1", "disconnected"]
       override.vm.provision :shell, path: "vagrant_scripts/idm_startup.sh", run: "always"
+      v.memory = 1536
     end
 
     idm.vm.provision :shell, path: "vagrant_scripts/idm_prep.sh", :args => [ENV["LANG"]]

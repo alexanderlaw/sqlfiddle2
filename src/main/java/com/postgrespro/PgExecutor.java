@@ -25,6 +25,8 @@ public class PgExecutor implements AutoCloseable {
     private Connection adminConnection = null;
     private Connection adminNewDbConnection = null;
     private Connection userConnection = null;
+    private String adminName;
+    private String adminPassword;
     private String username;
     private String userPassword;
     private String connectionStringTemplate = null;
@@ -292,17 +294,21 @@ public class PgExecutor implements AutoCloseable {
         return true;
     }
 
-    public Boolean prepare(String driverClass, String adminConnectionUrl,
-                        String adminName, String adminPassword,
-                        String connectionUrlTemplate, String userName,
-                        String preparationScript,
-                        String environment) throws Exception {
+    public Boolean setAdminConnection(String driverClass, String adminConnectionUrl,
+                                      String adminName, String adminPassword) throws ClassNotFoundException, SQLException {
+        Class.forName(driverClass);
+        adminConnection = DriverManager.getConnection(adminConnectionUrl, adminName, adminPassword);
+        this.adminName = adminName;
+        this.adminPassword = adminPassword;
+        return true;
+    }
+
+    public Boolean prepare(String connectionUrlTemplate, String userName,
+                           String preparationScript,
+                           String environment) throws Exception {
 
         this.username = generateUsername(userName);
         String dbusername = null;
-
-        Class.forName(driverClass);
-        adminConnection = DriverManager.getConnection(adminConnectionUrl, adminName, adminPassword);
 
         if (environment.equals("*")) {
             envType = EnvironmentType.DedicatedCluster;

@@ -20,6 +20,9 @@ import java.util.ResourceBundle
 @InheritConstructors
 class PostgreSQLException extends Exception {}
 
+@InheritConstructors
+class PasswordResetException extends Exception {}
+
 def i18nbundle = ResourceBundle.getBundle("i18n", Locale.getDefault(), Thread.currentThread().contextClassLoader)
 
 def content = request.getContent().asMap()
@@ -141,6 +144,30 @@ def generatePassword() {
     return sb.toString();
 }
 
+def tryPasswordReset(adminDatabase, db_type_id, oex) {
+    def adminConnection = null
+    try {
+        def adminConnUrl = adminDatabase.jdbc_url_template.replaceAll("#databaseName#", adminDatabase.default_database)
+        try {
+            adminConnection = Sql.newInstance(adminConnUrl, adminDatabase.admin_username, 'password', adminDatabase.jdbc_class_name)
+        } catch (Exception ex) {
+            throw oex ?: ex;
+        }
+        try {
+            adminDatabase.admin_password = generatePassword()
+            adminConnection.execute(String.format("ALTER ROLE %s WITH PASSWORD '%s'", adminDatabase.admin_username, adminDatabase.admin_password))
+            openidm.update("system/hosts/admin_databases/" + db_type_id, null,
+                           ["admin_username" : adminDatabase.admin_username,
+                            "admin_password" : adminDatabase.admin_password])
+        } catch (Exception e) {
+            throw new PasswordResetException(e.getMessage())
+        }
+    } finally {
+        if (adminConnection != null)
+            adminConnection.close()
+    }
+}
+
 def db_type = openidm.read("system/fiddles/db_types/" + content.db_type_id)
 if (db_type.simple_name != "PostgreSQL")
     assert content.schema_short_code;
@@ -199,42 +226,25 @@ if (db_type.context == "host") {
 
     if (db_type.simple_name == "PostgreSQL") {
         def adminDatabase = openidm.read("system/hosts/admin_databases/" + content.db_type_id)
-        if (adminDatabase.admin_password == 'password') {
-            // Change default password
-            def adminConnection = null
-            try {
-                def adminConnUrl = adminDatabase.jdbc_url_template.replaceAll("#databaseName#", adminDatabase.default_database)
-                adminConnection = Sql.newInstance(adminConnUrl, adminDatabase.admin_username, adminDatabase.admin_password, adminDatabase.jdbc_class_name)
-                adminDatabase.admin_password = generatePassword()
-                adminConnection.execute(String.format("ALTER ROLE %s WITH PASSWORD '%s'", adminDatabase.admin_username, adminDatabase.admin_password))
-                openidm.update("system/hosts/admin_databases/" + content.db_type_id, null,
-                    ["admin_username" : adminDatabase.admin_username,
-                     "admin_password" : adminDatabase.admin_password])
-            } catch (Exception e) {
-                println "exception: " + e.getMessage()
-                response.sets = [
-                    [
-                        STATEMENT: "",
-                        RESULTS: [DATA: [], COLUMNS: []],
-                        SUCCEEDED: false,
-                        ERRORMESSAGE: String.format(i18nbundle.getString("error.failedToChangeDefaultPassword"), e.getMessage())
-                    ]
-                ]
-                return response
-            } finally {
-                if (adminConnection != null)
-                    adminConnection.close()
-            }
-        }
         println((new Date()).toTimestamp().toString() + " executing query:\n\tenvironment: ${content.environment}\n\tpreparation: ${content.preparation}\n\tquery: ${content.sql}\n")
 
         def messages = StringBuilder.newInstance()
         def executor = new PgExecutor(messages)
         try {
+            if (adminDatabase.admin_password == 'password') {
+                tryPasswordReset(adminDatabase, content.db_type_id, null);
+            }
+            try {
+                executor.setAdminConnection(adminDatabase.jdbc_class_name, adminDatabase.jdbc_url,
+                                            adminDatabase.admin_username, adminDatabase.admin_password);
+            } catch (Exception e) {
+                tryPasswordReset(adminDatabase, content.db_type_id, e);
+                executor.setAdminConnection(adminDatabase.jdbc_class_name, adminDatabase.jdbc_url,
+                                            adminDatabase.admin_username, adminDatabase.admin_password);
+            }
+
             long startTime = (new Date()).toTimestamp().getTime()
             def prepared = executor.prepare(
-              adminDatabase.jdbc_class_name, adminDatabase.jdbc_url,
-              adminDatabase.admin_username, adminDatabase.admin_password,
               adminDatabase.jdbc_url_template,
               securityContext.authorizationId.id,
               content.preparation, content.environment)
@@ -247,6 +257,17 @@ if (db_type.context == "host") {
             // TODO: Rid of double conversion
             def jsonObj = new JsonSlurper().parseText(queryResult.toString())
             response.sets = jsonObj
+        } catch (PasswordResetException e) {
+            println "exception: " + e.getMessage()
+            response.sets = [
+                [
+                    STATEMENT: "",
+                    RESULTS: [DATA: [], COLUMNS: []],
+                    SUCCEEDED: false,
+                    ERRORMESSAGE: String.format(i18nbundle.getString("error.failedToChangeDefaultPassword"), e.getMessage())
+                ]
+            ]
+            return response
         } catch (Exception e) {
             println "exception: " + e.getMessage() + "\n" + messages
             response.sets = [

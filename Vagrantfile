@@ -126,6 +126,25 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     end
   end
 
+  config.vm.define "postgresql10-devel" do |pg|
+    pg.vm.provision :file, :source => ".vagrant/pg10d-files/repo", :destination => "/home/ubuntu"
+    pg.vm.provision :shell, :path => "vagrant_scripts/private/pgsql10d_bootstrap.sh", :args => ["10-devel", ENV["LANG"]]
+    pg.vm.provision :shell, :inline => 'echo "0 */4 * * *       service postgresql restart 2>&1" | crontab'
+
+    pg.vm.box = "ubuntu/xenial64"
+    pg.vm.network "private_network", ip: "10.0.0.101"
+
+    pg.vm.provider "virtualbox" do |v, override|
+      v.customize ["modifyvm", :id, "--nictype1", "virtio", "--nictype2", "virtio", "--chipset", "ich9", "--uartmode1", "disconnected"]
+      v.customize ["storagectl", :id, "--name", "SCSI", "--hostiocache", "on"]
+    end
+
+    pg.vm.provider "aws" do |aws, override|
+      aws.instance_type = "t2.micro"
+      aws.private_ip_address = "10.0.0.101"
+    end
+  end
+
   config.vm.define "appdb1" do |appdb1|
     appdb1.vm.provider "aws" do |aws, override|
       aws.private_ip_address = "10.0.0.16"

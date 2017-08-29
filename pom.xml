@@ -93,6 +93,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <version>2.7</version>
+<!--
                 <executions>
                     <execution>
                         <id>unpack-openidm-staging</id>
@@ -116,6 +117,7 @@
                         </configuration>
                     </execution>
                 </executions>
+-->
             </plugin>
 
             <plugin>
@@ -123,6 +125,19 @@
                 <artifactId>download-maven-plugin</artifactId>
                 <version>1.2.0</version>
                 <executions>
+
+                    <execution>
+                        <id>unpack-openidm-staging</id>
+                        <goals>
+                            <goal>wget</goal>
+                        </goals>
+                        <configuration>
+                            <url>https://github.com/OpenRock/OpenIDM/releases/download/3.1.0/openidm-3.1.0.zip</url>
+                            <unpack>true</unpack>
+                            <outputDirectory>${project.build.directory}/idm-staging/</outputDirectory>
+                            <md5>74aed4228ccf9bc5a8851bbd051d24ef</md5>
+                        </configuration>
+                    </execution>
 
                     <execution>
                         <id>install-almond</id>

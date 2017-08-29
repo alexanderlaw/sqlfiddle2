@@ -122,9 +122,8 @@ public class PgExecutor implements AutoCloseable {
                 case java.sql.Types.OTHER:
                     // for some reason, getObject is indexed starting at 1 instead of 0
                     Object obj = rs.getObject(i);
-                    Map nullMap = null;
                     if (obj == null) {
-                        result.put(nullMap);
+                        result.put(JSONObject.NULL);
                     } else {
                         String str = "<object>";
                         try {

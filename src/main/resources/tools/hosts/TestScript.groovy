@@ -58,7 +58,7 @@ sql.eachRow("""
 }
 
 if (!onePassed) {
-    throw "No hosts available"
+    throw new Exception("No hosts available")
 }
 
 

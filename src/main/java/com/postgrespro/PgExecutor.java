@@ -250,7 +250,7 @@ public class PgExecutor implements AutoCloseable {
         JSONObject result = null;
         execQuery(conn, "CREATE TEMPORARY TABLE IF NOT EXISTS command_output(output TEXT); TRUNCATE command_output;");
         execQuery(conn,
-         String.format("COPY command_output FROM PROGRAM 'sh -c \"%s 2>&1; true\"' (DELIMITER E'\01')",
+         String.format("COPY command_output FROM PROGRAM 'sh -c \"%s 2>&1 | sed ''s/\\\\\\\\/\\\\\\\\\\\\\\\\/g'' 2>&1; true\"' (DELIMITER E'\01')",
          command));
         Statement stmt = conn.createStatement();
         StringBuilder sb = new StringBuilder();
@@ -264,7 +264,6 @@ public class PgExecutor implements AutoCloseable {
         } finally {
             stmt.close();
         }
-
         try {
             result = new JSONObject(sb.toString());
         } catch (Exception ex) {

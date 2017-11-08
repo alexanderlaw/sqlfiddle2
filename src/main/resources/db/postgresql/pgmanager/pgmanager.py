@@ -53,7 +53,7 @@ class System_DBus(dbus.service.Object):
                 stderr=subprocess.STDOUT, shell=True)
         except subprocess.CalledProcessError as ex:
             return json.JSONEncoder(ensure_ascii=False).encode({
-                "error": ('get_pg_version failed: %s (%s)' % (str(ex), ex.output.decode('utf-8', 'backslashreplace')))});
+                "error": ('get_versions failed: %s (%s)' % (str(ex), ex.output.decode('utf-8', 'backslashreplace')))});
         pg_version = version_output.decode('utf-8').split('\n')[0]
 
         program_path = ''
@@ -63,7 +63,7 @@ class System_DBus(dbus.service.Object):
                 stderr=subprocess.STDOUT, shell=True)
         except subprocess.CalledProcessError as ex:
             return json.JSONEncoder(ensure_ascii=False).encode({
-                "error": ('get_pg_version failed: %s (%s)' % (str(ex), ex.output.decode('utf-8', 'backslashreplace')))});
+                "error": ('get_program_path failed: %s (%s)' % (str(ex), ex.output.decode('utf-8', 'backslashreplace')))});
 
         program_path = program_path.decode('utf-8')
         if program_path == '':

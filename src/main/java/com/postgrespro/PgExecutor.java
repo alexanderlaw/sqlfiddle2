@@ -246,8 +246,7 @@ public class PgExecutor implements AutoCloseable {
         return true;
     }
 
-    private JSONObject executeOSCommand(Connection conn, String command) throws Exception {
-        JSONObject result = null;
+    private StringBuilder executeOSCommandRaw(Connection conn, String command) throws Exception {
         execQuery(conn, "CREATE TEMPORARY TABLE IF NOT EXISTS command_output(output TEXT); TRUNCATE command_output;");
         execQuery(conn,
          String.format("COPY command_output FROM PROGRAM 'sh -c \"%s 2>&1 | sed ''s/\\\\\\\\/\\\\\\\\\\\\\\\\/g'' 2>&1; true\"' (DELIMITER E'\01')",
@@ -264,21 +263,28 @@ public class PgExecutor implements AutoCloseable {
         } finally {
             stmt.close();
         }
+        return sb;
+    }
+
+    private JSONObject executeOSCommand(Connection conn, String command) throws Exception {
+        StringBuilder sb = executeOSCommandRaw(conn, command);
         try {
-            result = new JSONObject(sb.toString());
+            return new JSONObject(sb.toString());
         } catch (Exception ex) {
             log.append("Invalid output: " + sb.toString() + "\n");
             throw ex;
         }
-        return result;
     }
 
     private JSONObject prepareDedicatedCluster(Connection adminConn, String username) throws Exception {
+        String postgres_path = executeOSCommandRaw(adminConn, "readlink -f /proc/`ps -p $$ -o ppid:1=`/exe").toString();
+        File postgres_program = new File(postgres_path);
+        String program_path = postgres_program.getAbsoluteFile().getParent() + File.separator;
         return executeOSCommand(adminConn, String.format(
          "dbus-send --system --type=method_call --reply-timeout=60000 --print-reply=literal " +
           "--dest=com.postgrespro.PGManager /com/postgrespro/PGManager " +
-          "com.postgrespro.PGManager.CreateCluster string:%s",
-         username
+          "com.postgrespro.PGManager.CreateCluster string:%s string:%s",
+         username, program_path
         ));
     }
 

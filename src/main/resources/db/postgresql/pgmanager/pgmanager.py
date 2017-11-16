@@ -44,31 +44,34 @@ class System_DBus(dbus.service.Object):
         return port
 
     @dbus.service.method('com.postgrespro.PGManager')
-    def CreateCluster(self, username):
-        username = str(username)
-        version_output = ''
-        try:
-            version_output = subprocess.check_output(
-                "perl -e \"use PgCommon; print join('\n', get_versions())\"",
-                stderr=subprocess.STDOUT, shell=True)
-        except subprocess.CalledProcessError as ex:
-            return json.JSONEncoder(ensure_ascii=False).encode({
-                "error": ('get_versions failed: %s (%s)' % (str(ex), ex.output.decode('utf-8', 'backslashreplace')))});
-        pg_version = version_output.decode('utf-8').split('\n')[0]
+    def CreateCluster(self, username, program_path):
+        pg_version = ''
+        if not program_path:
+            version_output = ''
+            try:
+                version_output = subprocess.check_output(
+                    "perl -e \"use PgCommon; print join('\n', get_versions())\"",
+                    stderr=subprocess.STDOUT, shell=True)
+            except subprocess.CalledProcessError as ex:
+                return json.JSONEncoder(ensure_ascii=False).encode({
+                    "error": ('get_versions failed: %s (%s)' % (str(ex), ex.output.decode('utf-8', 'backslashreplace')))});
+            pg_version = version_output.decode('utf-8').split('\n')[0]
 
-        program_path = ''
-        try:
-            program_path = subprocess.check_output(
-                "perl -e \"use PgCommon; print get_program_path '', '%s';\"" % pg_version,
-                stderr=subprocess.STDOUT, shell=True)
-        except subprocess.CalledProcessError as ex:
-            return json.JSONEncoder(ensure_ascii=False).encode({
-                "error": ('get_program_path failed: %s (%s)' % (str(ex), ex.output.decode('utf-8', 'backslashreplace')))});
+            try:
+                program_path = subprocess.check_output(
+                    "perl -e \"use PgCommon; print get_program_path '', '%s';\"" % pg_version,
+                    stderr=subprocess.STDOUT, shell=True)
+            except subprocess.CalledProcessError as ex:
+                return json.JSONEncoder(ensure_ascii=False).encode({
+                    "error": ('get_program_path failed: %s (%s)' % (str(ex), ex.output.decode('utf-8', 'backslashreplace')))});
 
-        program_path = program_path.decode('utf-8')
-        if program_path == '':
-            return json.JSONEncoder(ensure_ascii=False).encode({
-                "error": ('unable to get program path for postgres version: %s' % (pg_version))});
+            program_path = program_path.decode('utf-8')
+            if program_path == '':
+                return json.JSONEncoder(ensure_ascii=False).encode({
+                    "error": ('unable to get program path for postgres version: %s' % (pg_version))});
+
+        if not os.path.exists(program_path + 'pg_ctl'):
+            return json.JSONEncoder(ensure_ascii=False).encode({"error": ('invalid server program path: %s' % (program_path))})
 
         password = self.generatePassword()
         encPass = crypt.crypt(password,"22")
@@ -79,7 +82,6 @@ class System_DBus(dbus.service.Object):
         except subprocess.CalledProcessError as ex:
             return json.JSONEncoder(ensure_ascii=False).encode({
                 "error": ('useradd failed: %s (%s)' % (str(ex), ex.output.decode('utf-8', 'backslashreplace')))});
-
 
         port_number = 0
         postgres_password = self.generatePassword()
@@ -117,6 +119,8 @@ mkdir /tmp/{2} && \
 
     @dbus.service.method('com.postgrespro.PGManager')
     def DropCluster(self, username, program_path):
+        if not os.path.exists(program_path + 'pg_ctl'):
+            return json.JSONEncoder(ensure_ascii=False).encode({"error": ('invalid server program path: %s' % (program_path))})
         messages = ''
         db_path = os.path.expanduser("~%s/pgdb" % username)
         if program_path != '':

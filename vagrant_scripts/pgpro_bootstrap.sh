@@ -55,6 +55,14 @@ su postgres -c "psql -c \"CREATE ROLE admin WITH NOLOGIN SUPERUSER\""
 su postgres -c "psql </tmp/demo_small.sql"
 rm /tmp/demo_small.zip /tmp/demo_small.sql
 
+# Load json_test database
+(cd /tmp
+mkdir json_test
+wget https://oc.postgrespro.ru/index.php/s/MM2kmGri125U4UF -O - | unzip -d json_test
+su postgres -c "psql <json_test/json_test-db.sql"
+rm -rf json_test
+)
+
 # Install pgmanager service
 cp /vagrant/src/main/resources/db/postgresql/pgmanager/com.postgrespro.PGManager.conf /etc/dbus-1/system.d/
 cp /vagrant/src/main/resources/db/postgresql/pgmanager/com.postgrespro.PGManager.service /usr/share/dbus-1/system-services/

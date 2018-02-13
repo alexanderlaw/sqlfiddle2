@@ -37,6 +37,7 @@ echo "10.0.0.197 POSTGRESPRO96N_HOST" >> /etc/hosts
 echo "10.0.0.206 POSTGRESPROEE96_HOST" >> /etc/hosts
 echo "10.0.0.101 POSTGRESQL10D_HOST" >> /etc/hosts
 echo "10.0.0.100 POSTGRESQL10_HOST" >> /etc/hosts
+echo "10.0.0.110 POSTGRESPRO10_HOST" >> /etc/hosts
 
 apt-get --yes update
 apt-get --yes upgrade

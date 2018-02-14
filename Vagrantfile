@@ -162,9 +162,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     end
   end
 
-  config.vm.define "postgresql10-devel" do |pg|
-    pg.vm.provision :file, :source => ".vagrant/pg10d-files/repo", :destination => "/home/ubuntu"
-    pg.vm.provision :shell, :path => "vagrant_scripts/private/pgsql10d_bootstrap.sh", :args => ["10-devel", ENV["LANG"]]
+  config.vm.define "postgresql11-devel" do |pg|
+    pg.vm.provision :file, :source => ".vagrant/pg11d-files/src/", :destination => "/home/vagrant"
+    pg.vm.provision :shell, :path => "vagrant_scripts/pgsrc_bootstrap.sh", :args => ["11-devel", ENV["LANG"]]
     pg.vm.provision :shell, :inline => 'echo "0 */4 * * *       service postgresql restart 2>&1" | crontab'
 
     pg.vm.box = "ubuntu/xenial64"

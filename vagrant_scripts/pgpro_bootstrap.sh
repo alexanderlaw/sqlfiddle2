@@ -79,5 +79,6 @@ iptables -t filter -A OUTPUT -m state --state NEW -j LOG --log-level warning \
 iptables -t filter -A OUTPUT -m state --state NEW -j DROP
 netfilter-persistent save
 
-# Reset ubuntu password
-passwd -d ubuntu
+# Reset ubuntu and vagrant password
+getent passwd ubuntu && passwd -d ubuntu
+getent passwd vagrant && passwd -d vagrant

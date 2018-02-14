@@ -46,5 +46,6 @@ apt-get --yes install openjdk-8-jdk varnish
 
 cp /vagrant/src/main/resources/varnish/default.vcl /etc/varnish
 
-# Reset ubuntu password
-passwd -d ubuntu
+# Reset ubuntu and vagrant password
+getent passwd ubuntu && passwd -d ubuntu
+getent passwd vagrant && passwd -d vagrant
